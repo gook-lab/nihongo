@@ -1,0 +1,344 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Typography — Nihongo App</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Pretendard:wght@400;500;600;700;800&family=Instrument+Serif:ital@0;1&family=Noto+Sans+JP:wght@400;500;700;900&family=Noto+Serif+JP:wght@400;700;900&family=Hina+Mincho&family=Zen+Maru+Gothic:wght@400;500;700;900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet"/>
+<style>
+  :root {
+    --bg: #F1ECEC;
+    --ink: #1A1A1A;
+    --muted: #6B6B6B;
+    --line: #E5DCE0;
+    --primary: #E83E7A;
+    --primary-default: #FF5A5F;
+    --primary-ink: #0E0E10;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; background: var(--bg); color: var(--ink);
+    font-family: 'Pretendard', -apple-system, system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased; }
+
+  header { padding: 64px 40px 28px; max-width: 1280px; margin: 0 auto; }
+  .eyebrow { font-size: 11px; letter-spacing: 3px; color: var(--primary); font-weight: 800; }
+  h1 { margin: 8px 0 8px; font-size: 44px; font-weight: 800; letter-spacing: -1.4px; line-height: 1.1; }
+  .lede { color: var(--muted); font-size: 15px; line-height: 1.6; max-width: 640px; }
+
+  main { max-width: 1280px; margin: 0 auto; padding: 8px 40px 80px; }
+
+  .section-title {
+    margin: 56px 0 18px; display: flex; align-items: baseline; gap: 12px;
+  }
+  .section-title h2 { margin: 0; font-size: 22px; font-weight: 800; letter-spacing: -0.4px; }
+  .section-title span { font-size: 12px; color: var(--muted); }
+
+  /* ── A. Font families ── */
+  .families { display: grid; gap: 16px; grid-template-columns: repeat(3, 1fr); }
+  .fcard {
+    background: #fff; border-radius: 24px; padding: 24px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+    display: flex; flex-direction: column; gap: 12px;
+  }
+  .fcard .badge { font-size: 10px; letter-spacing: 2.5px; font-weight: 800; padding: 4px 10px; border-radius: 999px; display: inline-block; }
+  .badge-default { background: #FFF0F0; color: #FF5A5F; }
+  .badge-editorial { background: #F2EDE3; color: #E83E7A; }
+  .badge-ink { background: #F5F5F3; color: #0E0E10; }
+  .fcard .name { font-size: 14px; font-weight: 800; letter-spacing: -0.2px; color: var(--ink); }
+  .fcard .name em { font-style: normal; font-size: 11px; color: var(--muted); margin-left: 8px; letter-spacing: 0.5px; font-weight: 500; }
+  .fcard .stack { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--muted); background: #F4F4F4; padding: 6px 10px; border-radius: 6px; line-height: 1.5; word-break: break-all; }
+  .fcard .sample-big { font-size: 56px; line-height: 1; letter-spacing: -1.5px; font-weight: 700; }
+  .fcard .sample-mid { font-size: 16px; line-height: 1.5; }
+  .fcard .glyphs { display: flex; gap: 12px; font-size: 22px; color: var(--ink); padding: 8px 0; border-top: 1px solid var(--line); }
+  .fcard .glyphs span { font-weight: 500; }
+
+  /* ── B. Type scale ── */
+  .scale { background: #fff; border-radius: 24px; padding: 28px; box-shadow: 0 1px 3px rgba(0,0,0,0.04); }
+  .scale-row { display: grid; grid-template-columns: 80px 1fr 220px; gap: 24px; padding: 14px 0; border-bottom: 1px solid var(--line); align-items: baseline; }
+  .scale-row:last-child { border-bottom: none; }
+  .scale-row .label { font-size: 11px; font-weight: 800; letter-spacing: 1.5px; color: var(--muted); text-transform: uppercase; font-family: 'JetBrains Mono', monospace; }
+  .scale-row .sample { line-height: 1.15; color: var(--ink); }
+  .scale-row .meta { font-size: 11px; color: var(--muted); font-family: 'JetBrains Mono', monospace; }
+
+  /* ── C. Hierarchy preview ── */
+  .hier { display: grid; gap: 16px; grid-template-columns: 1fr 1fr 1fr; }
+  .hcard {
+    background: #fff; border-radius: 24px; padding: 24px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+    border: 1.5px solid transparent;
+  }
+  .hcard.default { border-color: #FFE0E1; }
+  .hcard.editorial { border-color: #EBE3D2; }
+  .hcard.ink { border-color: #E8E8E5; }
+  .hcard .label { font-size: 10px; letter-spacing: 2.5px; font-weight: 800; }
+  .hcard .label.default { color: #FF5A5F; }
+  .hcard .label.editorial { color: #E83E7A; }
+  .hcard .label.ink { color: #0E0E10; }
+  .hcard h3 { margin: 8px 0 4px; font-size: 30px; line-height: 1.15; letter-spacing: -0.6px; font-weight: 800; }
+  .hcard .lead { font-size: 14px; line-height: 1.65; color: var(--muted); margin: 6px 0 16px; }
+  .hcard .micro { font-size: 11px; letter-spacing: 1.5px; color: var(--muted); font-weight: 800; text-transform: uppercase; margin-top: 18px; }
+  .hcard .body { font-size: 13px; line-height: 1.7; color: var(--ink); margin-top: 6px; }
+  .hcard .meta { font-size: 11px; color: var(--muted); font-family: 'JetBrains Mono', monospace; margin-top: 10px; }
+  .hcard.default { font-family: 'Inter', 'Noto Sans JP', sans-serif; }
+  .hcard.editorial { font-family: 'Pretendard', 'Noto Sans JP', sans-serif; }
+  .hcard.editorial h3 { font-family: 'Instrument Serif', 'Noto Serif JP', serif; font-weight: 400; font-style: italic; letter-spacing: -1.2px; font-size: 38px; line-height: 1.05; }
+  .hcard.ink { font-family: 'Pretendard', 'Noto Sans JP', sans-serif; }
+
+  /* ── D. Japanese block ── */
+  .jp { background: #fff; border-radius: 24px; padding: 28px; box-shadow: 0 1px 3px rgba(0,0,0,0.04); }
+  .jp-grid { display: grid; gap: 20px; grid-template-columns: repeat(3, 1fr); margin-top: 16px; }
+  .jp-card { padding: 16px; border-radius: 16px; background: #FAF8F5; }
+  .jp-card .jp-kanji { font-family: 'Noto Sans JP', 'Hiragino Sans', serif; font-size: 44px; font-weight: 800; letter-spacing: -1px; }
+  .jp-card.serif .jp-kanji { font-family: 'Noto Serif JP', 'Hiragino Mincho ProN', serif; font-weight: 700; }
+  .jp-card.round .jp-kanji { font-family: 'Zen Maru Gothic', 'Hiragino Sans', sans-serif; font-weight: 700; }
+  .jp-card .jp-kana { font-size: 13px; color: var(--muted); margin-top: 6px; }
+  .jp-card .jp-romaji { font-size: 11px; color: #A89E99; font-family: 'JetBrains Mono', monospace; margin-top: 2px; }
+  .jp-card .jp-ko { font-size: 14px; margin-top: 10px; padding-top: 10px; border-top: 1px solid #EBE3D2; font-weight: 600; }
+  .jp-card .jp-meta { font-size: 9px; letter-spacing: 1.5px; color: var(--primary); font-weight: 800; margin-top: 4px; text-transform: uppercase; }
+
+  /* ── E. Usage rules ── */
+  .rules { background: #fff; border-radius: 24px; padding: 28px; box-shadow: 0 1px 3px rgba(0,0,0,0.04); display: grid; gap: 20px; grid-template-columns: repeat(2, 1fr); }
+  .rule h4 { margin: 0 0 6px; font-size: 13px; font-weight: 800; letter-spacing: -0.2px; }
+  .rule .ex { font-size: 14px; color: var(--ink); }
+  .rule .note { font-size: 11px; color: var(--muted); margin-top: 4px; font-family: 'JetBrains Mono', monospace; }
+  .ruleok { padding: 12px 16px; border-radius: 12px; background: #ECF8F0; border-left: 3px solid #2EBD6B; }
+  .rulebad { padding: 12px 16px; border-radius: 12px; background: #FFF0F0; border-left: 3px solid #E84992; }
+  .ruleok .h, .rulebad .h { font-size: 9px; letter-spacing: 2px; font-weight: 800; margin-bottom: 4px; }
+  .ruleok .h { color: #1A8A4B; }
+  .rulebad .h { color: #C92C66; }
+
+  footer { padding: 60px 0 40px; text-align: center; font-size: 12px; color: #A3A3A3; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="eyebrow">NIHONGO APP · TYPOGRAPHY</div>
+  <h1>타이포그래피 시스템</h1>
+  <p class="lede">3개 테마(기본·에디토리얼·잉크)별 폰트, 8단계 타입 스케일, 한국어/일본어/영문 위계,
+    실전 사용 규칙을 한 곳에 정리했어요.</p>
+</header>
+
+<main>
+
+  <!-- A. Font families per theme -->
+  <div class="section-title">
+    <h2>A · 테마별 폰트 패밀리</h2>
+    <span>본문 / 디스플레이 / 모노 — 3개 테마</span>
+  </div>
+  <div class="families">
+    <div class="fcard">
+      <span class="badge badge-default">기본 · DEFAULT</span>
+      <div>
+        <div class="name">Inter <em>+ Noto Sans JP</em></div>
+        <div class="stack">"Inter", "Noto Sans JP", system-ui</div>
+      </div>
+      <div class="sample-big" style="font-family: 'Inter', 'Noto Sans JP', sans-serif; font-weight: 800;">Aa 가 あ</div>
+      <div class="sample-mid" style="font-family: 'Inter', 'Noto Sans JP', sans-serif;">매일 5분씩, 일본어와 함께 — 努力する</div>
+      <div class="glyphs" style="font-family: 'Inter', 'Noto Sans JP', sans-serif;">
+        <span style="font-weight:400">400</span>
+        <span style="font-weight:500">500</span>
+        <span style="font-weight:600">600</span>
+        <span style="font-weight:700">700</span>
+        <span style="font-weight:800">800</span>
+        <span style="font-weight:900">900</span>
+      </div>
+    </div>
+
+    <div class="fcard">
+      <span class="badge badge-editorial">에디토리얼 · EDITORIAL</span>
+      <div>
+        <div class="name">Instrument Serif <em>display</em> · Pretendard <em>body</em></div>
+        <div class="stack">"Instrument Serif", "Noto Serif JP", Georgia, serif (display)<br/>"Pretendard", "Noto Sans JP" (body)</div>
+      </div>
+      <div class="sample-big" style="font-family: 'Instrument Serif', 'Noto Serif JP', serif; font-style: italic; font-weight: 400; letter-spacing: -2px;">Aa 가 あ</div>
+      <div class="sample-mid" style="font-family: 'Pretendard', 'Noto Sans JP', sans-serif;">매일 5분씩, 일본어와 함께 — 努力する</div>
+      <div class="glyphs" style="font-family: 'Instrument Serif', serif; font-size: 26px;">
+        <span style="font-style:italic">Aa</span>
+        <span>Aa</span>
+        <span style="font-family: 'Pretendard', sans-serif; font-weight: 700; font-size: 18px;">Aa</span>
+      </div>
+    </div>
+
+    <div class="fcard">
+      <span class="badge badge-ink">잉크 · INK</span>
+      <div>
+        <div class="name">Pretendard <em>· 한국어 우선 산세리프</em></div>
+        <div class="stack">"Pretendard", "Inter", "Noto Sans JP", system-ui</div>
+      </div>
+      <div class="sample-big" style="font-family: 'Pretendard', sans-serif; font-weight: 800; letter-spacing: -2px;">Aa 가 あ</div>
+      <div class="sample-mid" style="font-family: 'Pretendard', sans-serif;">매일 5분씩, 일본어와 함께 — 努力する</div>
+      <div class="glyphs" style="font-family: 'Pretendard', sans-serif;">
+        <span style="font-weight:400">400</span>
+        <span style="font-weight:500">500</span>
+        <span style="font-weight:600">600</span>
+        <span style="font-weight:700">700</span>
+        <span style="font-weight:800">800</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- B. Type scale -->
+  <div class="section-title">
+    <h2>B · 타입 스케일</h2>
+    <span>8단계 · Pretendard 기준</span>
+  </div>
+  <div class="scale" style="font-family: 'Pretendard', sans-serif;">
+    <div class="scale-row">
+      <span class="label">Display</span>
+      <span class="sample" style="font-size: 56px; font-weight: 800; letter-spacing: -2px;">오늘도 함께</span>
+      <span class="meta">56 / 60 · 800 · -2.0</span>
+    </div>
+    <div class="scale-row">
+      <span class="label">H1</span>
+      <span class="sample" style="font-size: 36px; font-weight: 800; letter-spacing: -1.2px;">함께 시작해볼까요?</span>
+      <span class="meta">36 / 42 · 800 · -1.2</span>
+    </div>
+    <div class="scale-row">
+      <span class="label">H2</span>
+      <span class="sample" style="font-size: 24px; font-weight: 800; letter-spacing: -0.6px;">오늘의 학습</span>
+      <span class="meta">24 / 32 · 800 · -0.6</span>
+    </div>
+    <div class="scale-row">
+      <span class="label">H3</span>
+      <span class="sample" style="font-size: 18px; font-weight: 700; letter-spacing: -0.3px;">학습 캘린더 · 7일 연속</span>
+      <span class="meta">18 / 26 · 700 · -0.3</span>
+    </div>
+    <div class="scale-row">
+      <span class="label">Body L</span>
+      <span class="sample" style="font-size: 16px; line-height: 1.6;">매일 5분씩, 일본어와 함께. 코타로와 함께 가볍게 시작해요.</span>
+      <span class="meta">16 / 26 · 400 · 0</span>
+    </div>
+    <div class="scale-row">
+      <span class="label">Body</span>
+      <span class="sample" style="font-size: 14px; line-height: 1.65;">하루 학습 목표를 설정하고, 꾸준히 진행 상황을 확인할 수 있어요.</span>
+      <span class="meta">14 / 23 · 400 · 0</span>
+    </div>
+    <div class="scale-row">
+      <span class="label">Caption</span>
+      <span class="sample" style="font-size: 12px; color: var(--muted);">베이스 단어 600개 · N5~N3</span>
+      <span class="meta">12 / 18 · 500 · 0</span>
+    </div>
+    <div class="scale-row">
+      <span class="label">Eyebrow</span>
+      <span class="sample" style="font-size: 11px; font-weight: 800; letter-spacing: 3px; color: var(--primary); text-transform: uppercase;">WELCOME TO NIHONGO</span>
+      <span class="meta">11 · 800 · +3 · UPPER</span>
+    </div>
+  </div>
+
+  <!-- C. Hierarchy preview per theme -->
+  <div class="section-title">
+    <h2>C · 테마별 위계 비교</h2>
+    <span>같은 페이지, 다른 톤</span>
+  </div>
+  <div class="hier">
+    <div class="hcard default">
+      <div class="label default">DEFAULT · INTER</div>
+      <h3>오늘도 함께 공부해요</h3>
+      <p class="lead">매일 5분씩, 일본어와 친해지는 가장 쉬운 방법.</p>
+      <div class="micro">단어 600 · 회화 280</div>
+      <p class="body">코타로, 유키, 소라 — 세 마스코트가 학습을 도와줘요.
+        하루의 시작과 마지막에 짧은 세션을 챙기면 한 주 안에 차이가 보여요.</p>
+      <div class="meta">16px body · -0.2 letter</div>
+    </div>
+    <div class="hcard editorial">
+      <div class="label editorial">EDITORIAL · INSTRUMENT SERIF</div>
+      <h3>오늘도 함께 공부해요</h3>
+      <p class="lead">매일 5분씩, 일본어와 친해지는 가장 쉬운 방법.</p>
+      <div class="micro">단어 600 · 회화 280</div>
+      <p class="body">코타로, 유키, 소라 — 세 마스코트가 학습을 도와줘요.
+        하루의 시작과 마지막에 짧은 세션을 챙기면 한 주 안에 차이가 보여요.</p>
+      <div class="meta">38px serif italic · -1.2 letter</div>
+    </div>
+    <div class="hcard ink">
+      <div class="label ink">INK · PRETENDARD</div>
+      <h3>오늘도 함께 공부해요</h3>
+      <p class="lead">매일 5분씩, 일본어와 친해지는 가장 쉬운 방법.</p>
+      <div class="micro">단어 600 · 회화 280</div>
+      <p class="body">코타로, 유키, 소라 — 세 마스코트가 학습을 도와줘요.
+        하루의 시작과 마지막에 짧은 세션을 챙기면 한 주 안에 차이가 보여요.</p>
+      <div class="meta">30px sans 800 · -0.6 letter</div>
+    </div>
+  </div>
+
+  <!-- D. Japanese typography -->
+  <div class="section-title">
+    <h2>D · 일본어 타이포</h2>
+    <span>한자 + 후리가나(히라가나) + 로마자 · 후리가나는 필수</span>
+  </div>
+  <div class="jp">
+    <p style="margin: 0; font-size: 13px; color: var(--muted); line-height: 1.7;">
+      모든 일본어 텍스트는 <b style="color:var(--ink)">한자 / 히라가나 / 로마자</b> 3단을 함께 표시합니다.
+      단어별로 띄어쓰기하여 음절을 구분하고, 한자는 본문 폰트의 일본어 fallback이 자연스럽게 받쳐주도록
+      Noto Sans JP / Noto Serif JP / Zen Maru Gothic을 컨텍스트에 맞게 선택합니다.
+    </p>
+    <div class="jp-grid">
+      <div class="jp-card">
+        <div class="jp-kanji">勉強</div>
+        <div class="jp-kana">べんきょう</div>
+        <div class="jp-romaji">benkyou</div>
+        <div class="jp-ko">공부</div>
+        <div class="jp-meta">N5 · NOTO SANS JP</div>
+      </div>
+      <div class="jp-card serif">
+        <div class="jp-kanji">努力</div>
+        <div class="jp-kana">どりょく</div>
+        <div class="jp-romaji">doryoku</div>
+        <div class="jp-ko">노력</div>
+        <div class="jp-meta">N3 · NOTO SERIF JP (Editorial)</div>
+      </div>
+      <div class="jp-card round">
+        <div class="jp-kanji">先生</div>
+        <div class="jp-kana">せんせい</div>
+        <div class="jp-romaji">sensei</div>
+        <div class="jp-ko">선생님</div>
+        <div class="jp-meta">N5 · ZEN MARU (Mascot)</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- E. Usage rules -->
+  <div class="section-title">
+    <h2>E · 사용 규칙</h2>
+    <span>실수하기 쉬운 포인트</span>
+  </div>
+  <div class="rules">
+    <div class="rule">
+      <h4>1. 후리가나는 반드시 표시</h4>
+      <div class="ruleok"><div class="h">DO</div><div class="ex">勉強 <span style="font-size:11px;color:var(--muted)">べんきょう · benkyou</span></div></div>
+      <div class="rulebad"><div class="h">DON'T</div><div class="ex">勉強</div><div class="note">읽기 정보 없으면 학습 가치 ↓</div></div>
+    </div>
+    <div class="rule">
+      <h4>2. 단어별 띄어쓰기</h4>
+      <div class="ruleok"><div class="h">DO</div><div class="ex" style="font-family:'Noto Sans JP'">ほんを かいます。</div></div>
+      <div class="rulebad"><div class="h">DON'T</div><div class="ex" style="font-family:'Noto Sans JP'">ほんをかいます。</div><div class="note">음절 구분 어려움</div></div>
+    </div>
+    <div class="rule">
+      <h4>3. Display 폰트는 헤더 + 마스코트 카드에만</h4>
+      <div class="ruleok"><div class="h">DO</div><div class="ex" style="font-family:'Instrument Serif',serif; font-style:italic; font-size: 22px;">매일의 일본어</div></div>
+      <div class="rulebad"><div class="h">DON'T</div><div class="ex" style="font-family:'Instrument Serif',serif; font-style:italic; font-size: 14px;">버튼 텍스트, 라벨, 설명문…</div><div class="note">14px 이하에서는 가독성 저하</div></div>
+    </div>
+    <div class="rule">
+      <h4>4. 최소 사이즈</h4>
+      <div class="ruleok"><div class="h">DO</div><div class="ex"><span style="font-size:12px">12px Caption</span> · <span style="font-size:11px;letter-spacing:2px;font-weight:800;text-transform:uppercase">11px Eyebrow</span></div></div>
+      <div class="rulebad"><div class="h">DON'T</div><div class="ex" style="font-size:9px">9px 본문은 모바일에서 읽히지 않아요</div><div class="note">접근성 가이드 미달</div></div>
+    </div>
+    <div class="rule">
+      <h4>5. letter-spacing은 큰 텍스트에만 음수, 작은 텍스트엔 양수</h4>
+      <div class="ruleok"><div class="h">DO</div><div class="ex"><span style="font-size:24px;letter-spacing:-0.5px;font-weight:800">24px / -0.5</span> · <span style="font-size:11px;letter-spacing:1.5px;font-weight:800">11PX / +1.5</span></div></div>
+      <div class="rulebad"><div class="h">DON'T</div><div class="ex"><span style="font-size:11px;letter-spacing:-0.5px">11px / -0.5</span></div><div class="note">작은 글씨 + 음수 = 자간 붙음</div></div>
+    </div>
+    <div class="rule">
+      <h4>6. 강조는 weight로, 색상은 primary만</h4>
+      <div class="ruleok"><div class="h">DO</div><div class="ex">총 <b>432 XP</b> 누적</div></div>
+      <div class="rulebad"><div class="h">DON'T</div><div class="ex">총 <span style="color:#3B82F6">432 XP</span> 누적</div><div class="note">primary 외 색상 금지</div></div>
+    </div>
+  </div>
+
+  <footer>Nihongo App · Typography System · 2026</footer>
+</main>
+
+</body>
+</html>

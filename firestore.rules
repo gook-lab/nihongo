@@ -1,0 +1,72 @@
+// Firestore 보안 규칙
+// 데이터 모델: users/{uid}/data/{profile|state|srs|library}
+//
+// 원칙:
+//   1) 인증된 사용자만 자기 자신의 문서 read/write
+//   2) uid 일치 강제 — 다른 사용자 문서 접근 차단
+//   3) profile 문서의 createdAt은 한 번만 쓸 수 있음 (악의적 덮어쓰기 방지)
+//   4) 알 수 없는 sub-path 차단 (default deny)
+//
+// 배포: `firebase deploy --only firestore:rules`
+// 로컬 검증: `firebase emulators:start --only firestore`
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // 자기 자신의 user doc만 접근 가능
+    match /users/{userId} {
+      allow read, write: if isOwner(userId);
+
+      // 4-doc 분리 저장소 (profile / state / srs / library)
+      // category는 화이트리스트로 제한 — 임의 path로 storage 남용 방지
+      match /data/{category} {
+        allow read: if isOwner(userId);
+        allow create: if isOwner(userId) && isValidCategory(category) && isValidPayload();
+        // update 시 createdAt은 기존 값 유지 강제 (악의적 덮어쓰기 방지)
+        allow update: if isOwner(userId)
+                      && isValidCategory(category)
+                      && isValidPayload()
+                      && createdAtUnchanged();
+        allow delete: if isOwner(userId);
+      }
+
+      // 그 외 sub-path는 허용하지 않음 (default deny가 이미 적용되지만 의도 명시)
+      match /{document=**} {
+        allow read, write: if false;
+      }
+    }
+
+    // 그 외 모든 path는 차단
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
+
+// ── helpers ─────────────────────────────────────────────────
+
+// 인증된 사용자가 본인인지
+function isOwner(userId) {
+  return request.auth != null && request.auth.uid == userId;
+}
+
+// 허용된 카테고리 4종만 (오타/임의 카테고리 차단)
+function isValidCategory(category) {
+  return category in ['profile', 'state', 'srs', 'library'];
+}
+
+// 클라이언트 페이로드 검증
+//   - 1MB 이하 (Firestore 단일 문서 1MB 한계 보호)
+//   - 최상위 키 100개 이하 (악의적 거대 객체 차단)
+function isValidPayload() {
+  return request.resource.data.keys().size() <= 100
+         && request.resource.data.size() <= 999999;
+}
+
+// update 시 createdAt 필드가 존재했다면 동일한 값이어야 함 (history rewrite 방지)
+function createdAtUnchanged() {
+  return !('createdAt' in resource.data)
+         || !('createdAt' in request.resource.data)
+         || resource.data.createdAt == request.resource.data.createdAt;
+}

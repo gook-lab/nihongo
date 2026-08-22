@@ -1,0 +1,399 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>로그인 & 온보딩 — KOTOBA</title>
+<style>
+  html, body { margin: 0; padding: 0; background: #F1ECEC; height: 100%; font-family: -apple-system, "SF Pro Display", "Pretendard", "Noto Sans KR", system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
+  * { box-sizing: border-box; }
+  #root { min-height: 100vh; }
+
+  @keyframes screenIn {
+    from { opacity: 0; transform: translateX(24px); }
+    to   { opacity: 1; transform: translateX(0); }
+  }
+  @keyframes slideUp {
+    from { opacity: 0; transform: translateY(14px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(10px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes splashLogo {
+    0%   { opacity: 0; transform: scale(0.6) rotate(-6deg); }
+    60%  { opacity: 1; transform: scale(1.06) rotate(0); }
+    100% { opacity: 1; transform: scale(1) rotate(0); }
+  }
+  @keyframes floatBubble {
+    0%, 100% { transform: translate(0, 0) scale(1); opacity: .35; }
+    50%      { transform: translate(20px, -30px) scale(1.15); opacity: .55; }
+  }
+  @keyframes mascotBob {
+    0%, 100% { transform: translateY(0) rotate(-1.5deg); }
+    50%      { transform: translateY(-8px) rotate(1.5deg); }
+  }
+  @keyframes haloPulse {
+    0%, 100% { transform: scale(1); opacity: .6; }
+    50%      { transform: scale(1.12); opacity: .9; }
+  }
+  @keyframes quizWord {
+    0%   { opacity: 0; transform: translateY(20px) scale(0.92); }
+    100% { opacity: 1; transform: translateY(0) scale(1); }
+  }
+  @keyframes speech {
+    from { opacity: 0; transform: translate(10px, -4px) scale(0.6); }
+    to   { opacity: 1; transform: translate(0,0) scale(1); }
+  }
+  @keyframes badgePop {
+    0%   { transform: scale(0.4) rotate(-8deg); opacity: 0; }
+    70%  { transform: scale(1.1) rotate(2deg); opacity: 1; }
+    100% { transform: scale(1) rotate(0); opacity: 1; }
+  }
+  @keyframes spinSlow {
+    to { transform: rotate(360deg); }
+  }
+  @keyframes confetti {
+    0%   { transform: translateY(-40px) rotate(0); opacity: 0; }
+    20%  { opacity: 1; }
+    100% { transform: translateY(800px) rotate(720deg); opacity: 0; }
+  }
+  @keyframes introRing {
+    0%   { stroke-dashoffset: 0; opacity: 1; }
+    50%  { stroke-dashoffset: -160; opacity: .7; }
+    100% { stroke-dashoffset: 0; opacity: 1; }
+  }
+  @keyframes introDot {
+    0%, 100% { transform: scale(1); opacity: 1; }
+    50%      { transform: scale(1.6); opacity: .5; }
+  }
+  @keyframes introSparkle {
+    0%, 100% { transform: scale(0.8) rotate(0); opacity: .4; }
+    50%      { transform: scale(1.2) rotate(20deg); opacity: 1; }
+  }
+  @keyframes introCard1 {
+    0%, 100% { transform: translateY(0) rotate(-3deg); }
+    50%      { transform: translateY(-6px) rotate(-3deg); }
+  }
+  @keyframes introCard2 {
+    0%, 100% { transform: translateY(0) rotate(0); }
+    50%      { transform: translateY(-10px) rotate(0); }
+  }
+  @keyframes introCard3 {
+    0%, 100% { transform: translateY(0) rotate(3deg); }
+    50%      { transform: translateY(-6px) rotate(3deg); }
+  }
+  @keyframes introSlide {
+    from { opacity: 0; transform: translateX(40px); }
+    to   { opacity: 1; transform: translateX(0); }
+  }
+  @keyframes errBounce {
+    0%, 100% { transform: translate(0,0); }
+    50%      { transform: translate(0,-6px); }
+  }
+  @keyframes gearSpin { to { transform: rotate(360deg); } }
+  @keyframes updateArrow {
+    0%, 100% { transform: translateY(0); opacity: 1; }
+    50%      { transform: translateY(6px); opacity: 0.6; }
+  }
+  @keyframes flameFlicker {
+    0%, 100% { transform: scale(1) rotate(-2deg); }
+    50%      { transform: scale(1.06) rotate(2deg); }
+  }
+  @keyframes barGrow {
+    from { transform: scaleY(0); }
+    to   { transform: scaleY(1); }
+  }
+
+  /* dev-mode chrome around the phone */
+  .stage {
+    min-height: 100vh; display: flex; flex-direction: column;
+    align-items: center; justify-content: center; gap: 24px; padding: 36px 0;
+  }
+  .crumb {
+    display: flex; gap: 6px; flex-wrap: wrap; justify-content: center;
+    max-width: 800px; padding: 0 16px;
+  }
+  .crumb button {
+    padding: 6px 12px; border-radius: 999px; border: 1px solid rgba(0,0,0,0.1);
+    background: #fff; cursor: pointer; font-size: 11px; font-weight: 600;
+    color: #6B6B6B; font-family: inherit; letter-spacing: -0.2px;
+    transition: all .2s;
+  }
+  .crumb button.active { background: var(--primary, #FF3366); color: #fff; border-color: transparent; }
+  .crumb button.err { color: #FF8A4D; border-color: #FFD9C2; }
+  .crumb button.active.err { background: #FF8A4D; color: #fff; border-color: transparent; }
+  .crumb button:hover:not(.active) { background: #F4F4F4; }
+</style>
+
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+</head>
+<body>
+  <div id="root"></div>
+
+  <script type="text/babel" src="ios-frame.jsx"></script>
+  <script type="text/babel" src="tweaks-panel.jsx"></script>
+  <script type="text/babel" src="mascots.jsx"></script>
+  <script type="text/babel" src="screens.jsx"></script>
+  <script type="text/babel" src="extras.jsx"></script>
+
+  <script type="text/babel">
+    const TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
+      "primary": "#1A1A1A",
+      "mascot": "kotaro",
+      "speed": 1,
+      "phoneScale": 1,
+      "viewMode": "phone"
+    }/*EDITMODE-END*/;
+
+    const FLOW = [
+      'splash','intro','welcome','auth','email','quizIntro','quiz','result','mascot','goal','notify','ready','home'
+    ];
+    const ERR_FLOW = ['errNetwork','errServer','errPermission','errMaintenance','errUpdate','errNotFound'];
+    const SCREEN_LABELS = {
+      splash:'01 Splash', intro:'02 Intro', welcome:'03 Welcome', auth:'04 Auth', email:'05 Email',
+      quizIntro:'06 Quiz Intro', quiz:'07 Quiz', result:'08 Level Result',
+      mascot:'09 Mascot Pick', goal:'10 Daily Goal', notify:'11 Notifications',
+      ready:'12 Ready', home:'13 Home Preview',
+      errNetwork:'E1 Network', errServer:'E2 Server', errPermission:'E3 Permission',
+      errMaintenance:'E4 Maintenance', errUpdate:'E5 Update', errNotFound:'E6 Not Found',
+    };
+
+    const SCREENS = {
+      splash: SplashScreen, intro: IntroScreen, welcome: WelcomeScreen,
+      auth: AuthScreen, email: EmailScreen,
+      quizIntro: QuizIntroScreen, quiz: QuizScreen, result: ResultScreen,
+      mascot: MascotScreen, goal: GoalScreen, notify: NotifyScreen,
+      ready: ReadyScreen, home: HomeScreen,
+      errNetwork: ErrNetwork, errServer: ErrServer, errPermission: ErrPermission,
+      errMaintenance: ErrMaintenance, errUpdate: ErrUpdate, errNotFound: ErrNotFound,
+    };
+
+    function PhoneCard({ id, tweaks, flowState, setFlowState, go, mini }) {
+      const ScreenComp = SCREENS[id];
+      const label = SCREEN_LABELS[id] || id;
+      const scale = mini ? 0.42 : 1;
+      return (
+        <div data-screen-label={label} style={{
+          display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8,
+        }}>
+          <div style={{
+            width: 402 * scale, height: 874 * scale, position: 'relative',
+            transition: 'transform .2s',
+          }}>
+            <div style={{
+              transform: `scale(${scale})`, transformOrigin: 'top left',
+              position: 'absolute', top: 0, left: 0,
+              pointerEvents: mini ? 'none' : 'auto',
+            }}>
+              <IOSDevice width={402} height={874}>
+                <div style={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
+                  <ScreenComp go={go} state={flowState} setState={setFlowState} tweaks={tweaks}/>
+                </div>
+              </IOSDevice>
+            </div>
+          </div>
+          {mini && (
+            <div style={{
+              fontSize: 11, fontWeight: 700, color: '#1A1A1A',
+              letterSpacing: 0.2, padding: '4px 10px', borderRadius: 999,
+              background: '#fff', border: '1px solid #EEE',
+            }}>{label}</div>
+          )}
+        </div>
+      );
+    }
+
+    // Flowchart positions: col, row
+    const FLOW_POS = {
+      splash:     [0,0], intro:    [1,0], welcome:  [2,0], auth:     [3,0],
+      email:      [3,1], quizIntro:[3,1.6], quiz:   [2,1.6], result:  [1,1.6],
+      mascot:     [0,1.6], goal:   [0,3.2], notify: [1,3.2], ready:   [2,3.2], home: [3,3.2],
+    };
+    const ERR_POS = {
+      errNetwork:[0,5], errServer:[1,5], errPermission:[2,5],
+      errMaintenance:[3,5], errUpdate:[0,6.6], errNotFound:[1,6.6],
+    };
+    // Arrows: pairs of screen ids
+    const ARROWS = [
+      ['splash','intro'],['intro','welcome'],['welcome','auth'],
+      ['auth','email'],['auth','quizIntro'],['email','quizIntro'],
+      ['quizIntro','quiz'],['quiz','result'],['result','mascot'],
+      ['mascot','goal'],['goal','notify'],['notify','ready'],['ready','home'],
+    ];
+
+    function FlowchartView({ tweaks, flowState, setFlowState, go }) {
+      const COL = 260, ROW = 480;
+      const PHONE_W = 402 * 0.42, PHONE_H = 874 * 0.42;
+      const all = { ...FLOW_POS, ...ERR_POS };
+      const cellX = c => 60 + c * COL;
+      const cellY = r => 40 + r * ROW;
+
+      // Compute SVG arrow endpoints
+      function arrow(fromId, toId) {
+        const [c1, r1] = all[fromId], [c2, r2] = all[toId];
+        const sameRow = r1 === r2;
+        const x1 = cellX(c1) + PHONE_W / 2;
+        const y1 = cellY(r1) + PHONE_H / 2;
+        const x2 = cellX(c2) + PHONE_W / 2;
+        const y2 = cellY(r2) + PHONE_H / 2;
+        if (sameRow) {
+          // horizontal
+          const dir = c2 > c1 ? 1 : -1;
+          const sx = x1 + dir * (PHONE_W / 2 + 6);
+          const ex = x2 - dir * (PHONE_W / 2 + 14);
+          return <path key={fromId+'-'+toId} d={`M${sx} ${y1} L${ex} ${y2}`} stroke="#C4B7BD" strokeWidth="2" fill="none" markerEnd="url(#arrow)" strokeDasharray="5 5"/>;
+        } else {
+          // L-shape
+          const midY = (y1 + y2) / 2;
+          const sy = y1 + (r2 > r1 ? 1 : -1) * (PHONE_H / 2 + 6);
+          return <path key={fromId+'-'+toId} d={`M${x1} ${sy} L${x1} ${midY} L${x2} ${midY} L${x2} ${y2 - (r2 > r1 ? 1 : -1) * (PHONE_H / 2 + 14)}`} stroke="#C4B7BD" strokeWidth="2" fill="none" markerEnd="url(#arrow)" strokeDasharray="5 5"/>;
+        }
+      }
+
+      const stageW = 60 + 4 * COL;
+      const stageH = 80 + 8 * ROW;
+
+      return (
+        <div style={{
+          width: '100%', overflow: 'auto', background: '#F1ECEC',
+          padding: '20px 0',
+        }}>
+          <div style={{ position: 'relative', width: stageW, height: stageH, margin: '0 auto' }}>
+            {/* Section labels */}
+            <div style={{ position: 'absolute', left: 60, top: 0, fontSize: 11, letterSpacing: 3, color: tweaks.primary, fontWeight: 800 }}>MAIN FLOW</div>
+            <div style={{ position: 'absolute', left: 60, top: cellY(5) - 32, fontSize: 11, letterSpacing: 3, color: '#FF8A4D', fontWeight: 800 }}>ERROR / BOUNDARY</div>
+            <div style={{ position: 'absolute', left: 60, top: cellY(5) - 14, height: 1, width: stageW - 120, background: '#E5DCE0' }}/>
+
+            {/* Arrows under */}
+            <svg width={stageW} height={stageH} style={{ position: 'absolute', top: 0, left: 0, pointerEvents: 'none' }}>
+              <defs>
+                <marker id="arrow" viewBox="0 0 12 12" refX="10" refY="6" markerWidth="10" markerHeight="10" orient="auto">
+                  <path d="M0 0 L12 6 L0 12 z" fill="#C4B7BD"/>
+                </marker>
+              </defs>
+              {ARROWS.map(([a,b]) => arrow(a,b))}
+            </svg>
+
+            {/* Phones */}
+            {Object.entries(all).map(([id, [c, r]]) => (
+              <div key={id} style={{ position: 'absolute', left: cellX(c), top: cellY(r) }}>
+                <PhoneCard id={id} tweaks={tweaks} flowState={flowState} setFlowState={setFlowState} go={go} mini/>
+              </div>
+            ))}
+          </div>
+        </div>
+      );
+    }
+
+    function App() {
+      const [tweaks, setTweak] = useTweaks(TWEAK_DEFAULTS);
+      const [route, setRoute] = React.useState('splash');
+      const [flowState, setFlowState] = React.useState({});
+
+      const go = React.useCallback((dest) => {
+        setRoute(dest);
+        if (dest === 'splash') setFlowState({});
+      }, []);
+      const setState = React.useCallback((patch) => {
+        setFlowState(s => ({ ...s, ...patch }));
+      }, []);
+
+      const ScreenComp = SCREENS[route];
+
+      const flowMode = tweaks.viewMode === 'flow';
+
+      // viewport scale: fit phone to viewport
+      const [scale, setScale] = React.useState(1);
+      React.useEffect(() => {
+        const update = () => {
+          const vh = window.innerHeight - 200;
+          const vw = window.innerWidth - 60;
+          const s = Math.min(vh / 874, vw / 402, 1) * (tweaks.phoneScale || 1);
+          setScale(Math.max(0.45, Math.min(s, 1.2)));
+        };
+        update();
+        window.addEventListener('resize', update);
+        return () => window.removeEventListener('resize', update);
+      }, [tweaks.phoneScale]);
+
+      return (
+        <div className="stage" style={{ ['--primary']: tweaks.primary }}>
+          {flowMode ? (
+            <FlowchartView tweaks={tweaks} flowState={flowState} setFlowState={setFlowState} go={go}/>
+          ) : (
+          <>
+          <div data-screen-label={SCREEN_LABELS[route]} style={{
+            transform: `scale(${scale})`, transformOrigin: 'center center',
+            transition: 'transform .25s ease',
+          }}>
+            <IOSDevice width={402} height={874}>
+              <div key={route} style={{ height: '100%', display: 'flex', flexDirection: 'column', position: 'relative' }}>
+                <ScreenComp
+                  go={go} state={flowState} setState={setState}
+                  tweaks={tweaks}
+                />
+              </div>
+            </IOSDevice>
+          </div>
+
+          <div className="crumb">
+            <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', justifyContent: 'center', maxWidth: 920 }}>
+              {FLOW.map((id, i) => (
+                <button key={id} className={route === id ? 'active' : ''}
+                  onClick={() => go(id)}>{String(i+1).padStart(2,'0')} {id}</button>
+              ))}
+            </div>
+            <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', justifyContent: 'center', maxWidth: 920, marginTop: 6 }}>
+              {ERR_FLOW.map((id, i) => (
+                <button key={id} className={route === id ? 'active err' : 'err'}
+                  onClick={() => go(id)}>E{i+1} {id.replace('err','')}</button>
+              ))}
+            </div>
+          </div>
+          </>
+          )}
+
+          <TweaksPanel title="Tweaks">
+            <TweakSection label="View"/>
+            <TweakRadio label="Mode" value={tweaks.viewMode}
+              options={[
+                { value: 'phone', label: 'Phone' },
+                { value: 'flow',  label: 'Flowchart' },
+              ]}
+              onChange={v => setTweak('viewMode', v)}/>
+            <TweakSection label="Theme"/>
+            <TweakColor label="Primary" value={tweaks.primary}
+              options={['#FF3366','#FF6B9D','#1A1A1A','#7FB8E6','#E84992','#F4B36A']}
+              onChange={v => setTweak('primary', v)}/>
+            <TweakSection label="Mascot"/>
+            <TweakRadio label="Friend" value={tweaks.mascot}
+              options={[
+                { value: 'kotaro', label: '코타로' },
+                { value: 'yuki',   label: '유키' },
+                { value: 'sora',   label: '소라' },
+              ]}
+              onChange={v => setTweak('mascot', v)}/>
+            <TweakSection label="Motion"/>
+            <TweakSlider label="Animation speed" value={tweaks.speed}
+              min={0.5} max={2} step={0.1} unit="×"
+              onChange={v => setTweak('speed', v)}/>
+            <TweakSlider label="Phone size" value={tweaks.phoneScale}
+              min={0.6} max={1.2} step={0.05} unit="×"
+              onChange={v => setTweak('phoneScale', v)}/>
+            <TweakSection label="Jump to screen"/>
+            <TweakSelect label="Screen" value={route}
+              options={FLOW.map((id,i) => ({ value: id, label: `${String(i+1).padStart(2,'0')} · ${id}` }))}
+              onChange={v => go(v)}/>
+          </TweaksPanel>
+        </div>
+      );
+    }
+
+    ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
+  </script>
+</body>
+</html>

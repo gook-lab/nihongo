@@ -1,0 +1,433 @@
+// 읽기 확장 데이터 — 10편 추가 (N5 5 + N4 3 + N3 2)
+// 학습 큐레이션. paragraph reading은 단어별 띄어쓰기 필수.
+import type { ReadingPiece } from './reading'
+
+export const EXTRA_READING_PIECES: ReadingPiece[] = [
+  // ─── N5 추가 (5편) ────────────────────────────────────
+  {
+    id: 'n5-school-day',
+    title: '学校の一日',
+    titleKo: '학교에서의 하루',
+    level: 'N5',
+    source: 'curated',
+    sourceLabel: '학습 큐레이션',
+    estimatedMinutes: 1,
+    description: '학교에서 보내는 평범한 하루',
+    paragraphs: [
+      {
+        ja: '私は 八時に 学校へ 行きます。',
+        reading: 'わたしは はちじに がっこうへ いきます。',
+        ko: '나는 8시에 학교에 갑니다.',
+      },
+      {
+        ja: 'クラスメートと 一緒に 勉強します。',
+        reading: 'くらすめーとと いっしょに べんきょうします。',
+        ko: '반 친구와 같이 공부합니다.',
+      },
+      {
+        ja: '昼ご飯は 給食を 食べます。',
+        reading: 'ひるごはんは きゅうしょくを たべます。',
+        ko: '점심은 급식을 먹습니다.',
+      },
+      {
+        ja: '三時に 家へ 帰ります。',
+        reading: 'さんじに いえへ かえります。',
+        ko: '3시에 집에 돌아갑니다.',
+      },
+    ],
+    vocabulary: [
+      { kanji: '学校', reading: 'がっこう', meaning: '학교' },
+      { kanji: 'クラスメート', reading: 'くらすめーと', meaning: '반 친구' },
+      { kanji: '給食', reading: 'きゅうしょく', meaning: '급식' },
+      { kanji: '昼ご飯', reading: 'ひるごはん', meaning: '점심' },
+      { kanji: '勉強', reading: 'べんきょう', meaning: '공부' },
+      { kanji: '帰る', reading: 'かえる', meaning: '돌아가다' },
+    ],
+  },
+  {
+    id: 'n5-park-walk',
+    title: '公園の散歩',
+    titleKo: '공원 산책',
+    level: 'N5',
+    source: 'curated',
+    sourceLabel: '학습 큐레이션',
+    estimatedMinutes: 1,
+    description: '주말 아침 공원에서의 산책',
+    paragraphs: [
+      {
+        ja: '日曜日の 朝、公園を 散歩します。',
+        reading: 'にちようびの あさ、こうえんを さんぽします。',
+        ko: '일요일 아침, 공원을 산책합니다.',
+      },
+      {
+        ja: '空気が きれいで、気持ちが いいです。',
+        reading: 'くうきが きれいで、きもちが いいです。',
+        ko: '공기가 맑고 기분이 좋습니다.',
+      },
+      {
+        ja: '犬と 一緒に 走る 人も います。',
+        reading: 'いぬと いっしょに はしる ひとも います。',
+        ko: '개와 함께 달리는 사람도 있습니다.',
+      },
+      {
+        ja: 'ベンチで 少し 休みます。',
+        reading: 'べんちで すこし やすみます。',
+        ko: '벤치에서 잠시 쉽니다.',
+      },
+    ],
+    vocabulary: [
+      { kanji: '日曜日', reading: 'にちようび', meaning: '일요일' },
+      { kanji: '公園', reading: 'こうえん', meaning: '공원' },
+      { kanji: '散歩', reading: 'さんぽ', meaning: '산책' },
+      { kanji: '空気', reading: 'くうき', meaning: '공기' },
+      { kanji: 'ベンチ', reading: 'べんち', meaning: '벤치' },
+      { kanji: '気持ち', reading: 'きもち', meaning: '기분' },
+    ],
+  },
+  {
+    id: 'n5-friend-letter',
+    title: '友達への手紙',
+    titleKo: '친구에게 보내는 편지',
+    level: 'N5',
+    source: 'curated',
+    sourceLabel: '학습 큐레이션',
+    estimatedMinutes: 1,
+    description: '오랜만에 친구에게 안부를 묻는 짧은 편지',
+    paragraphs: [
+      {
+        ja: '元気ですか。久しぶりですね。',
+        reading: 'げんきですか。ひさしぶりですね。',
+        ko: '잘 지내요? 오랜만이네요.',
+      },
+      {
+        ja: '私は 東京で 元気に 暮らして います。',
+        reading: 'わたしは とうきょうで げんきに くらして います。',
+        ko: '저는 도쿄에서 잘 지내고 있어요.',
+      },
+      {
+        ja: '今度 一緒に 食事を しませんか。',
+        reading: 'こんど いっしょに しょくじを しませんか。',
+        ko: '다음에 같이 식사하지 않을래요?',
+      },
+      {
+        ja: '返事を 待って います。',
+        reading: 'へんじを まって います。',
+        ko: '답장 기다릴게요.',
+      },
+    ],
+    vocabulary: [
+      { kanji: '元気', reading: 'げんき', meaning: '잘 지냄, 활기' },
+      { kanji: '久しぶり', reading: 'ひさしぶり', meaning: '오랜만' },
+      { kanji: '東京', reading: 'とうきょう', meaning: '도쿄' },
+      { kanji: '暮らす', reading: 'くらす', meaning: '살다, 지내다' },
+      { kanji: '食事', reading: 'しょくじ', meaning: '식사' },
+      { kanji: '返事', reading: 'へんじ', meaning: '답장' },
+    ],
+  },
+  {
+    id: 'n5-shopping-supermarket',
+    title: 'スーパーで 買い物',
+    titleKo: '슈퍼마켓에서 장보기',
+    level: 'N5',
+    source: 'curated',
+    sourceLabel: '학습 큐레이션',
+    estimatedMinutes: 1,
+    description: '저녁 식사 재료를 사러 슈퍼에 갑니다',
+    paragraphs: [
+      {
+        ja: '夕方、スーパーへ 行きました。',
+        reading: 'ゆうがた、すーぱーへ いきました。',
+        ko: '저녁 무렵 슈퍼에 갔습니다.',
+      },
+      {
+        ja: '野菜と 肉と 牛乳を 買いました。',
+        reading: 'やさいと にくと ぎゅうにゅうを かいました。',
+        ko: '야채와 고기와 우유를 샀습니다.',
+      },
+      {
+        ja: '今日は りんごが 安かったです。',
+        reading: 'きょうは りんごが やすかったです。',
+        ko: '오늘은 사과가 쌌습니다.',
+      },
+      {
+        ja: '全部で 二千円でした。',
+        reading: 'ぜんぶで にせんえんでした。',
+        ko: '전부 해서 2000엔이었습니다.',
+      },
+    ],
+    vocabulary: [
+      { kanji: 'スーパー', reading: 'すーぱー', meaning: '슈퍼마켓' },
+      { kanji: '野菜', reading: 'やさい', meaning: '야채' },
+      { kanji: '牛乳', reading: 'ぎゅうにゅう', meaning: '우유' },
+      { kanji: 'りんご', reading: 'りんご', meaning: '사과' },
+      { kanji: '安い', reading: 'やすい', meaning: '싸다' },
+      { kanji: '全部', reading: 'ぜんぶ', meaning: '전부' },
+    ],
+  },
+  {
+    id: 'n5-birthday-party',
+    title: '誕生日の パーティー',
+    titleKo: '생일 파티',
+    level: 'N5',
+    source: 'curated',
+    sourceLabel: '학습 큐레이션',
+    estimatedMinutes: 1,
+    description: '친구의 생일 파티에 초대받았어요',
+    paragraphs: [
+      {
+        ja: '昨日は 友達の 誕生日でした。',
+        reading: 'きのうは ともだちの たんじょうびでした。',
+        ko: '어제는 친구의 생일이었습니다.',
+      },
+      {
+        ja: 'みんなで ケーキを 食べました。',
+        reading: 'みんなで けーきを たべました。',
+        ko: '다 같이 케이크를 먹었습니다.',
+      },
+      {
+        ja: '私は プレゼントに 本を あげました。',
+        reading: 'わたしは ぷれぜんとに ほんを あげました。',
+        ko: '저는 선물로 책을 줬습니다.',
+      },
+      {
+        ja: 'とても 楽しい 時間でした。',
+        reading: 'とても たのしい じかんでした。',
+        ko: '아주 즐거운 시간이었습니다.',
+      },
+    ],
+    vocabulary: [
+      { kanji: '誕生日', reading: 'たんじょうび', meaning: '생일' },
+      { kanji: 'ケーキ', reading: 'けーき', meaning: '케이크' },
+      { kanji: 'プレゼント', reading: 'ぷれぜんと', meaning: '선물' },
+      { kanji: 'あげる', reading: 'あげる', meaning: '주다' },
+      { kanji: '楽しい', reading: 'たのしい', meaning: '즐겁다' },
+      { kanji: '時間', reading: 'じかん', meaning: '시간' },
+    ],
+  },
+
+  // ─── N4 추가 (3편) ────────────────────────────────────
+  {
+    id: 'n4-onsen-trip',
+    title: '温泉旅行',
+    titleKo: '온천 여행',
+    level: 'N4',
+    source: 'curated',
+    sourceLabel: '학습 큐레이션',
+    estimatedMinutes: 2,
+    description: '주말에 가족과 온천 마을을 다녀온 이야기',
+    paragraphs: [
+      {
+        ja: '先週末、家族と 温泉に 行きました。',
+        reading: 'せんしゅうまつ、かぞくと おんせんに いきました。',
+        ko: '지난 주말, 가족과 온천에 갔습니다.',
+      },
+      {
+        ja: '電車で 三時間 かかりましたが、景色が きれいで 楽しかったです。',
+        reading: 'でんしゃで さんじかん かかりましたが、けしきが きれいで たのしかったです。',
+        ko: '전철로 3시간 걸렸지만, 풍경이 예뻐서 즐거웠습니다.',
+      },
+      {
+        ja: '旅館の 料理は とても おいしくて、写真を たくさん 撮りました。',
+        reading: 'りょかんの りょうりは とても おいしくて、しゃしんを たくさん とりました。',
+        ko: '료칸 음식은 아주 맛있어서 사진을 많이 찍었습니다.',
+      },
+      {
+        ja: '夜は 露天風呂に 入って、星を 見ました。',
+        reading: 'よるは ろてんぶろに はいって、ほしを みました。',
+        ko: '밤에는 노천탕에 들어가 별을 봤습니다.',
+      },
+      {
+        ja: 'また 来年も 行きたいです。',
+        reading: 'また らいねんも いきたいです。',
+        ko: '내년에도 또 가고 싶습니다.',
+      },
+    ],
+    vocabulary: [
+      { kanji: '温泉', reading: 'おんせん', meaning: '온천' },
+      { kanji: '景色', reading: 'けしき', meaning: '풍경' },
+      { kanji: '旅館', reading: 'りょかん', meaning: '료칸(전통 여관)' },
+      { kanji: '料理', reading: 'りょうり', meaning: '요리' },
+      { kanji: '露天風呂', reading: 'ろてんぶろ', meaning: '노천탕' },
+      { kanji: '来年', reading: 'らいねん', meaning: '내년' },
+    ],
+  },
+  {
+    id: 'n4-job-interview',
+    title: '面接の日',
+    titleKo: '면접 보는 날',
+    level: 'N4',
+    source: 'curated',
+    sourceLabel: '학습 큐레이션',
+    estimatedMinutes: 2,
+    description: '긴장되는 첫 면접 경험',
+    paragraphs: [
+      {
+        ja: '今日は 大事な 面接が ありました。',
+        reading: 'きょうは だいじな めんせつが ありました。',
+        ko: '오늘은 중요한 면접이 있었습니다.',
+      },
+      {
+        ja: 'スーツを 着て、早めに 家を 出ました。',
+        reading: 'すーつを きて、はやめに いえを でました。',
+        ko: '정장을 입고 일찍 집을 나섰습니다.',
+      },
+      {
+        ja: '受付で 名前を 伝えて、待合室で 待ちました。',
+        reading: 'うけつけで なまえを つたえて、まちあいしつで まちました。',
+        ko: '접수처에서 이름을 말하고 대기실에서 기다렸습니다.',
+      },
+      {
+        ja: '緊張しましたが、自分の 経験を しっかり 話せました。',
+        reading: 'きんちょうしましたが、じぶんの けいけんを しっかり はなせました。',
+        ko: '긴장했지만 제 경험을 잘 이야기할 수 있었습니다.',
+      },
+      {
+        ja: '結果は 来週 教えて くれる そうです。',
+        reading: 'けっかは らいしゅう おしえて くれる そうです。',
+        ko: '결과는 다음 주에 알려준다고 합니다.',
+      },
+    ],
+    vocabulary: [
+      { kanji: '面接', reading: 'めんせつ', meaning: '면접' },
+      { kanji: 'スーツ', reading: 'すーつ', meaning: '정장' },
+      { kanji: '受付', reading: 'うけつけ', meaning: '접수' },
+      { kanji: '緊張', reading: 'きんちょう', meaning: '긴장' },
+      { kanji: '経験', reading: 'けいけん', meaning: '경험' },
+      { kanji: '結果', reading: 'けっか', meaning: '결과' },
+    ],
+  },
+  {
+    id: 'n4-summer-festival',
+    title: '夏祭り',
+    titleKo: '여름 축제',
+    level: 'N4',
+    source: 'curated',
+    sourceLabel: '학습 큐레이션',
+    estimatedMinutes: 2,
+    description: '한여름 밤, 동네 마쓰리에서 보낸 시간',
+    paragraphs: [
+      {
+        ja: '町の 夏祭りに 浴衣を 着て 行きました。',
+        reading: 'まちの なつまつりに ゆかたを きて いきました。',
+        ko: '동네 여름 축제에 유카타를 입고 갔습니다.',
+      },
+      {
+        ja: '神社の 周りに 屋台が たくさん 並んで いました。',
+        reading: 'じんじゃの まわりに やたいが たくさん ならんで いました。',
+        ko: '신사 주변에 포장마차가 많이 늘어서 있었습니다.',
+      },
+      {
+        ja: 'たこ焼きと かき氷を 食べて、金魚すくいも しました。',
+        reading: 'たこやきと かきごおりを たべて、きんぎょすくいも しました。',
+        ko: '타코야키와 빙수를 먹고, 금붕어잡기도 했습니다.',
+      },
+      {
+        ja: '最後に 大きな 花火が 上がって、本当に きれいでした。',
+        reading: 'さいごに おおきな はなびが あがって、ほんとうに きれいでした。',
+        ko: '마지막에 큰 불꽃놀이가 올라서, 정말로 예뻤습니다.',
+      },
+    ],
+    vocabulary: [
+      { kanji: '夏祭り', reading: 'なつまつり', meaning: '여름 축제' },
+      { kanji: '浴衣', reading: 'ゆかた', meaning: '유카타(여름 기모노)' },
+      { kanji: '神社', reading: 'じんじゃ', meaning: '신사' },
+      { kanji: '屋台', reading: 'やたい', meaning: '포장마차' },
+      { kanji: '金魚すくい', reading: 'きんぎょすくい', meaning: '금붕어잡기' },
+      { kanji: '花火', reading: 'はなび', meaning: '불꽃놀이' },
+    ],
+  },
+
+  // ─── N3 추가 (2편) ────────────────────────────────────
+  {
+    id: 'n3-remote-work',
+    title: 'リモートワークの日々',
+    titleKo: '재택근무의 일상',
+    level: 'N3',
+    source: 'curated',
+    sourceLabel: '학습 큐레이션',
+    estimatedMinutes: 3,
+    description: '집에서 일하는 새로운 일상이 가져온 변화',
+    paragraphs: [
+      {
+        ja: '最近、会社に 行かずに 家で 働く 日が 増えました。',
+        reading: 'さいきん、かいしゃに いかずに いえで はたらく ひが ふえました。',
+        ko: '요즘 회사에 가지 않고 집에서 일하는 날이 늘었습니다.',
+      },
+      {
+        ja: '通勤時間が 無くなった おかげで、朝の 時間に 余裕が できました。',
+        reading: 'つうきんじかんが なくなった おかげで、あさの じかんに よゆうが できました。',
+        ko: '통근 시간이 없어진 덕분에 아침에 여유가 생겼습니다.',
+      },
+      {
+        ja: 'しかし、同僚と 直接 会えないので、コミュニケーションが 難しいと 感じる ことも あります。',
+        reading: 'しかし、どうりょうと ちょくせつ あえないので、こみゅにけーしょんが むずかしいと かんじる ことも あります。',
+        ko: '하지만 동료와 직접 만날 수 없어서, 커뮤니케이션이 어렵다고 느낄 때도 있습니다.',
+      },
+      {
+        ja: '集中力を 保つ ために、決まった 時間に 休憩を 取る ように して います。',
+        reading: 'しゅうちゅうりょくを たもつ ために、きまった じかんに きゅうけいを とる ように して います。',
+        ko: '집중력을 유지하기 위해 정해진 시간에 휴식을 취하도록 하고 있습니다.',
+      },
+      {
+        ja: '在宅勤務には メリットも デメリットも ありますが、自分なりの リズムを 作る ことが 大切です。',
+        reading: 'ざいたくきんむには めりっとも でめりっとも ありますが、じぶんなりの りずむを つくる ことが たいせつです。',
+        ko: '재택근무에는 장점도 단점도 있지만, 자기만의 리듬을 만드는 것이 중요합니다.',
+      },
+    ],
+    vocabulary: [
+      { kanji: '通勤', reading: 'つうきん', meaning: '통근' },
+      { kanji: '余裕', reading: 'よゆう', meaning: '여유' },
+      { kanji: '同僚', reading: 'どうりょう', meaning: '동료' },
+      { kanji: '集中力', reading: 'しゅうちゅうりょく', meaning: '집중력' },
+      { kanji: '保つ', reading: 'たもつ', meaning: '유지하다' },
+      { kanji: '在宅勤務', reading: 'ざいたくきんむ', meaning: '재택근무' },
+      { kanji: 'リズム', reading: 'りずむ', meaning: '리듬' },
+    ],
+  },
+  {
+    id: 'n3-language-learning',
+    title: '外国語を 学ぶ こと',
+    titleKo: '외국어를 배운다는 것',
+    level: 'N3',
+    source: 'curated',
+    sourceLabel: '학습 큐레이션',
+    estimatedMinutes: 3,
+    description: '새로운 언어를 배우는 즐거움과 어려움',
+    paragraphs: [
+      {
+        ja: '外国語を 学ぶ ことは 単なる 言葉の 勉強では ありません。',
+        reading: 'がいこくごを まなぶ ことは たんなる ことばの べんきょうでは ありません。',
+        ko: '외국어를 배우는 것은 단순한 언어 공부가 아닙니다.',
+      },
+      {
+        ja: 'その 国の 文化や 考え方を 知る きっかけにも なります。',
+        reading: 'その くにの ぶんかや かんがえかたを しる きっかけにも なります。',
+        ko: '그 나라의 문화와 사고방식을 알게 되는 계기도 됩니다.',
+      },
+      {
+        ja: '最初は 単語も 文法も 難しくて、何度も 挫折しそうに なりました。',
+        reading: 'さいしょは たんごも ぶんぽうも むずかしくて、なんども ざせつしそうに なりました。',
+        ko: '처음에는 단어도 문법도 어려워서 몇 번이나 포기할 뻔했습니다.',
+      },
+      {
+        ja: 'でも、毎日 少しずつ 続ける ことで、確実に 力が ついて きます。',
+        reading: 'でも、まいにち すこしずつ つづける ことで、かくじつに ちからが ついて きます。',
+        ko: '하지만 매일 조금씩 계속하면 확실히 실력이 늘어갑니다.',
+      },
+      {
+        ja: '何より、その 言語で 誰かと 会話できた 瞬間の 喜びは 何ものにも 代えられません。',
+        reading: 'なにより、その げんごで だれかと かいわできた しゅんかんの よろこびは なにものにも かえられません。',
+        ko: '무엇보다, 그 언어로 누군가와 대화할 수 있게 된 순간의 기쁨은 무엇과도 바꿀 수 없습니다.',
+      },
+    ],
+    vocabulary: [
+      { kanji: '外国語', reading: 'がいこくご', meaning: '외국어' },
+      { kanji: '文化', reading: 'ぶんか', meaning: '문화' },
+      { kanji: '考え方', reading: 'かんがえかた', meaning: '사고방식' },
+      { kanji: '文法', reading: 'ぶんぽう', meaning: '문법' },
+      { kanji: '挫折', reading: 'ざせつ', meaning: '좌절, 포기' },
+      { kanji: '確実', reading: 'かくじつ', meaning: '확실' },
+      { kanji: '喜び', reading: 'よろこび', meaning: '기쁨' },
+    ],
+  },
+]

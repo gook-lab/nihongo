@@ -1,0 +1,459 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Mascot Animations — KOTOBA</title>
+<style>
+  :root {
+    --bg: #F1ECEC;
+    --card: #ffffff;
+    --ink: #1A1A1A;
+    --muted: #6B6B6B;
+    --primary: #FF3366;
+    --kotaro: #F4B36A;
+    --yuki: #7FB8E6;
+    --sora: #C5BCD0;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; background: var(--bg); color: var(--ink);
+    font-family: -apple-system, "SF Pro Display", "Pretendard", "Noto Sans KR", system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased; }
+
+  header {
+    padding: 56px 40px 24px; max-width: 1280px; margin: 0 auto;
+  }
+  .eyebrow { font-size: 11px; letter-spacing: 3px; color: var(--primary); font-weight: 800; }
+  h1 { margin: 8px 0 8px; font-size: 40px; font-weight: 800; letter-spacing: -1px; line-height: 1.15; }
+  .lede { color: var(--muted); font-size: 15px; line-height: 1.6; max-width: 560px; }
+
+  .toolbar {
+    max-width: 1280px; margin: 24px auto 12px; padding: 0 40px;
+    display: flex; gap: 12px; align-items: center; flex-wrap: wrap;
+  }
+  .toolbar .pill {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 8px 14px; border-radius: 999px; background: #fff;
+    border: 1px solid rgba(0,0,0,0.08);
+    font-size: 13px; font-weight: 700; color: var(--muted); cursor: pointer;
+    transition: all .2s;
+  }
+  .toolbar .pill.active { background: var(--ink); color: #fff; border-color: transparent; }
+  .toolbar .pill .swatch {
+    width: 12px; height: 12px; border-radius: 4px;
+  }
+
+  main {
+    max-width: 1280px; margin: 0 auto; padding: 16px 40px 80px;
+  }
+  .row-label {
+    display: flex; align-items: center; gap: 14px; margin: 36px 0 18px;
+  }
+  .row-label .badge {
+    width: 56px; height: 56px; border-radius: 16px; flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+    background: #fff; border: 1px solid rgba(0,0,0,0.06);
+    overflow: hidden;
+  }
+  .row-label .badge img { width: 100%; height: 100%; object-fit: cover; }
+  .row-label .meta .name { font-size: 22px; font-weight: 800; letter-spacing: -0.4px; }
+  .row-label .meta .jp { font-size: 12px; color: var(--muted); margin-top: 2px; letter-spacing: 0.5px; }
+
+  .grid {
+    display: grid; gap: 16px;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  }
+  .card {
+    position: relative; aspect-ratio: 1 / 1.1;
+    border-radius: 22px; overflow: hidden;
+    display: flex; flex-direction: column; align-items: center;
+    justify-content: flex-end; padding: 18px 14px;
+    transition: transform .25s ease, box-shadow .25s ease;
+    isolation: isolate;
+  }
+  .card:hover { transform: translateY(-3px); box-shadow: 0 16px 36px rgba(0,0,0,0.08); }
+
+  .stage {
+    position: absolute; inset: 0; display: flex; align-items: center;
+    justify-content: center; pointer-events: none;
+  }
+  .mascot {
+    width: 78%; aspect-ratio: 1/1; object-fit: contain;
+    mix-blend-mode: multiply;
+    transform-origin: 50% 80%;
+    will-change: transform;
+  }
+  .label {
+    position: relative; z-index: 5; text-align: center;
+    background: rgba(255,255,255,0.86);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    padding: 8px 14px; border-radius: 12px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+  }
+  .label .emo { font-size: 11px; font-weight: 800; letter-spacing: 2px; }
+  .label .line { font-size: 11px; color: var(--muted); margin-top: 2px; font-weight: 600;
+    font-family: ui-monospace, SF Mono, monospace; letter-spacing: 0; }
+  .card[data-emo="sleep"] .label { background: rgba(255,255,255,0.12); }
+  .card[data-emo="sleep"] .label .line { color: rgba(255,255,255,0.6); }
+
+  /* per-row tinted backgrounds */
+  .row.kotaro .card { background: linear-gradient(180deg, #FFF5E5 0%, #FFE9CC 100%); }
+  .row.yuki   .card { background: linear-gradient(180deg, #EEF6FD 0%, #DCEAF7 100%); }
+  .row.sora   .card { background: linear-gradient(180deg, #F4F0F8 0%, #E6DEF0 100%); }
+
+  /* card emotion overrides — keep base bg but tint */
+  .card[data-emo="sad"]      { background: linear-gradient(180deg, #E4ECF4 0%, #C8D5E2 100%) !important; }
+  .card[data-emo="streak"]   { background: linear-gradient(180deg, #FFE7C2 0%, #FF8A4D 100%) !important; }
+  .card[data-emo="sleep"]    { background: linear-gradient(180deg, #2A2B4E 0%, #161629 100%) !important; }
+  .card[data-emo="sleep"] .label .emo,
+  .card[data-emo="sleep"] .label .line { color: rgba(255,255,255,0.92); }
+
+  /* — Animations — */
+  @keyframes bobIdle {
+    0%, 100% { transform: translateY(0) rotate(-1.5deg); }
+    50%      { transform: translateY(-8px) rotate(1.5deg); }
+  }
+  @keyframes happy {
+    0%, 100% { transform: translateY(0) rotate(-3deg) scale(1); }
+    25%      { transform: translateY(-12px) rotate(3deg) scale(1.04); }
+    50%      { transform: translateY(0)    rotate(-3deg) scale(1); }
+    75%      { transform: translateY(-8px) rotate(3deg) scale(1.04); }
+  }
+  @keyframes celebrate {
+    0%, 100% { transform: translateY(0) rotate(0) scale(1); }
+    25%      { transform: translateY(-22px) rotate(-8deg) scale(1.06); }
+    50%      { transform: translateY(-30px) rotate(0) scale(1.08); }
+    75%      { transform: translateY(-22px) rotate(8deg) scale(1.06); }
+  }
+  @keyframes sad {
+    0%, 100% { transform: translateY(2px) rotate(0) scale(0.97); }
+    50%      { transform: translateY(-2px) rotate(0) scale(0.97); }
+  }
+  @keyframes cheer {
+    0%, 100% { transform: translate(-2px, 0) rotate(-2deg) scale(1.02); }
+    25%      { transform: translate( 2px,-3px) rotate(2deg)  scale(1.04); }
+    50%      { transform: translate(-2px, 0) rotate(-2deg) scale(1.02); }
+    75%      { transform: translate( 2px,-3px) rotate(2deg)  scale(1.04); }
+  }
+  @keyframes sleep {
+    0%, 100% { transform: translateY(0) rotate(-3deg) scale(1); }
+    50%      { transform: translateY(2px) rotate(3deg) scale(1); }
+  }
+  @keyframes think {
+    0%, 100% { transform: rotate(-6deg) translateY(0); }
+    50%      { transform: rotate(-6deg) translateY(-4px); }
+  }
+  @keyframes streak {
+    0%, 100% { transform: translate(0, -2px) rotate(-1deg) scale(1.02); }
+    50%      { transform: translate(0,  2px) rotate( 1deg) scale(1.02); }
+  }
+  @keyframes wave {
+    0%, 100% { transform: rotate(0); }
+    25%      { transform: rotate(-4deg); }
+    75%      { transform: rotate(4deg); }
+  }
+  @keyframes shock {
+    0%   { transform: scale(1); }
+    10%  { transform: scale(1.18) translateY(-6px); }
+    20%  { transform: scale(1) translateY(0); }
+    100% { transform: scale(1); }
+  }
+
+  .mascot.happy    { animation: happy     1.4s ease-in-out infinite; }
+  .mascot.celebrate{ animation: celebrate 1.2s ease-in-out infinite; }
+  .mascot.sad      { animation: sad       2.2s ease-in-out infinite; }
+  .mascot.cheer    { animation: cheer     0.4s ease-in-out infinite; }
+  .mascot.sleep    { animation: sleep     3.6s ease-in-out infinite; }
+  .mascot.think    { animation: think     2.4s ease-in-out infinite; }
+  .mascot.streak   { animation: streak    0.18s ease-in-out infinite; }
+  .mascot.wave     { animation: wave      1.4s ease-in-out infinite; }
+  .mascot.shock    { animation: shock     2.6s ease-out infinite; }
+
+  /* — Overlay sprites — */
+  .sprites { position: absolute; inset: 0; pointer-events: none; }
+  .sprites > * { position: absolute; }
+
+  @keyframes sparkle {
+    0%, 100% { transform: scale(0.6) rotate(0); opacity: 0; }
+    50%      { transform: scale(1.1) rotate(40deg); opacity: 1; }
+  }
+  @keyframes drift-up {
+    0%   { transform: translateY(0) scale(0.8); opacity: 0; }
+    20%  { opacity: 1; }
+    100% { transform: translateY(-80px) scale(1.1); opacity: 0; }
+  }
+  @keyframes fall {
+    0%   { transform: translateY(-40px) rotate(0); opacity: 0; }
+    10%  { opacity: 1; }
+    100% { transform: translateY(220px) rotate(540deg); opacity: 0; }
+  }
+  @keyframes tear {
+    0%   { transform: translateY(0) scale(0.6); opacity: 0; }
+    20%  { opacity: 1; transform: translateY(8px) scale(1); }
+    100% { transform: translateY(60px) scale(0.8); opacity: 0; }
+  }
+  @keyframes pulse-ring {
+    0%   { transform: scale(0.4); opacity: 1; }
+    100% { transform: scale(1.6); opacity: 0; }
+  }
+  @keyframes z-float {
+    0%   { transform: translate(0,0) rotate(0); opacity: 0; }
+    20%  { opacity: 1; }
+    100% { transform: translate(20px, -50px) rotate(20deg); opacity: 0; }
+  }
+  @keyframes flame {
+    0%, 100% { transform: translateY(0) scaleY(1) scaleX(1); }
+    50%      { transform: translateY(-4px) scaleY(1.15) scaleX(0.9); }
+  }
+  @keyframes bobble {
+    0%, 100% { transform: translateY(0) rotate(-2deg); }
+    50%      { transform: translateY(-6px) rotate(2deg); }
+  }
+
+  .sparkle-grp .s { animation: sparkle 1.4s ease-in-out infinite; transform-origin: center; }
+  .confetti span { animation: fall 2.4s ease-in infinite; }
+  .raindrops span { animation: fall 1.6s linear infinite; }
+  .tears span { animation: tear 1.8s ease-in infinite; }
+  .ring { border: 3px solid var(--primary); border-radius: 50%;
+    animation: pulse-ring 1.6s ease-out infinite; }
+  .zs span { animation: z-float 2.6s ease-out infinite; }
+  .flames span { animation: flame 0.6s ease-in-out infinite; }
+  .bubble { animation: bobble 2.4s ease-in-out infinite; }
+
+  /* speech bubble */
+  .bubble {
+    position: absolute; top: 14px; right: 14px;
+    background: #fff; padding: 6px 10px; border-radius: 14px;
+    font-size: 12px; font-weight: 700; color: var(--ink);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    z-index: 6; white-space: nowrap;
+  }
+  .bubble:after {
+    content: ''; position: absolute; left: -5px; top: 12px;
+    width: 10px; height: 10px; background: #fff;
+    transform: rotate(45deg);
+    box-shadow: -2px 2px 6px rgba(0,0,0,0.04);
+  }
+  .card[data-emo="sleep"] .bubble { background: rgba(255,255,255,0.95); }
+  .card[data-emo="sleep"] .bubble:after { background: rgba(255,255,255,0.95); }
+
+  /* download row */
+  .legend {
+    display: flex; gap: 24px; flex-wrap: wrap; align-items: center;
+    margin-top: 12px; font-size: 12px; color: var(--muted);
+  }
+  .legend code {
+    background: #fff; padding: 3px 8px; border-radius: 6px;
+    font-family: ui-monospace, SF Mono, monospace; font-size: 11px;
+    border: 1px solid rgba(0,0,0,0.06);
+  }
+  .footer { margin-top: 48px; padding: 24px 0; font-size: 12px; color: var(--muted); text-align: center; }
+
+  /* paused state */
+  body.paused .mascot,
+  body.paused .sprites > *,
+  body.paused .sprites > * > * { animation-play-state: paused !important; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="eyebrow">KOTOBA · MASCOT ANIMATIONS</div>
+  <h1>3 친구 × 9 감정<br/>= 27가지 반응</h1>
+  <p class="lede">학습 결과, 연속 출석, 알림 등 다양한 상황에 쓸 수 있는 마스코트 애니메이션 라이브러리.
+    각 카드는 순수 CSS로 동작해요 — 그대로 복사해 쓰세요.</p>
+</header>
+
+<div class="toolbar">
+  <button class="pill active" data-filter="all">전체</button>
+  <button class="pill" data-filter="kotaro"><span class="swatch" style="background:#F4B36A"></span>코타로</button>
+  <button class="pill" data-filter="yuki"><span class="swatch" style="background:#7FB8E6"></span>유키</button>
+  <button class="pill" data-filter="sora"><span class="swatch" style="background:#C5BCD0"></span>소라</button>
+  <div style="flex:1"></div>
+  <button class="pill" id="playToggle">⏸  일시정지</button>
+</div>
+
+<main id="mascots"></main>
+
+<script>
+  const EMOTIONS = [
+    { key: 'happy',     anim: 'happy',     label: 'HAPPY',     line: '잘했어요!',         sprite: 'sparkles' },
+    { key: 'celebrate', anim: 'celebrate', label: 'PERFECT',   line: '완벽해요!',         sprite: 'confetti' },
+    { key: 'cheer',     anim: 'cheer',     label: 'CHEER',     line: '할 수 있어요!',     sprite: 'ring' },
+    { key: 'streak',    anim: 'streak',    label: 'STREAK',    line: '7일 연속! 🔥',      sprite: 'flames' },
+    { key: 'wave',      anim: 'wave',      label: 'HELLO',     line: '안녕!',             sprite: 'hearts' },
+    { key: 'think',     anim: 'think',     label: 'HMM…',      line: '다시 해볼까요?',    sprite: 'questions' },
+    { key: 'shock',     anim: 'shock',     label: 'OOPS',      line: '아이쿠!',           sprite: 'exclaim' },
+    { key: 'sad',       anim: 'sad',       label: 'SAD',       line: '조금만 더 노력!',   sprite: 'tears' },
+    { key: 'sleep',     anim: 'sleep',     label: 'ZZZ',       line: '내일 또 만나요',    sprite: 'zs' },
+  ];
+
+  const CHARS = [
+    { id: 'kotaro', name: '코타로', jp: 'コタロウ · Shiba',     img: 'assets/kotaro.jpg' },
+    { id: 'yuki',   name: '유키',   jp: 'ユキ · Arctic Fox',    img: 'assets/yuki.jpg' },
+    { id: 'sora',   name: '소라',   jp: 'ソラ · Cat',           img: 'assets/sora.jpg' },
+  ];
+
+  function spriteHTML(kind) {
+    switch (kind) {
+      case 'sparkles': {
+        // 5 sparkle stars around mascot
+        const points = [
+          { x: '15%', y: '22%', s: 0,   d: 14 },
+          { x: '82%', y: '18%', s: 0.3, d: 18 },
+          { x: '20%', y: '60%', s: 0.7, d: 12 },
+          { x: '85%', y: '52%', s: 0.5, d: 16 },
+          { x: '50%', y: '14%', s: 0.9, d: 10 },
+        ];
+        return `<div class="sparkle-grp">` + points.map(p => `
+          <svg class="s" style="left:${p.x};top:${p.y};animation-delay:${p.s}s" width="${p.d*2}" height="${p.d*2}" viewBox="0 0 24 24">
+            <path d="M12 1 L14 10 L23 12 L14 14 L12 23 L10 14 L1 12 L10 10 Z" fill="#FFD400" stroke="#FF8A00" stroke-width="0.5"/>
+          </svg>`).join('') + `</div>`;
+      }
+      case 'confetti': {
+        const colors = ['#FF3366','#FFB400','#2EBD6B','#7FB8E6','#E84992','#F4B36A'];
+        let html = `<div class="confetti">`;
+        for (let i = 0; i < 16; i++) {
+          html += `<span style="left:${(i*6.3+3)%100}%;top:-10px;width:8px;height:12px;border-radius:2px;background:${colors[i%6]};animation-delay:${(i*0.12).toFixed(2)}s;animation-duration:${(2 + i*0.08).toFixed(2)}s"></span>`;
+        }
+        html += `</div>`;
+        return html;
+      }
+      case 'ring': {
+        return `<div style="position:absolute;left:50%;top:60%;width:160px;height:160px;transform:translate(-50%,-50%);">
+          <div class="ring" style="position:absolute;inset:0"></div>
+          <div class="ring" style="position:absolute;inset:0;animation-delay:0.5s"></div>
+          <div class="ring" style="position:absolute;inset:0;animation-delay:1s"></div>
+        </div>`;
+      }
+      case 'flames': {
+        let html = `<div class="flames">`;
+        for (let i = 0; i < 6; i++) {
+          html += `<span style="left:${10 + i*15}%;bottom:6%;animation-delay:${(i*0.07).toFixed(2)}s">
+            <svg width="${22 + (i%3)*6}" height="${30 + (i%3)*8}" viewBox="0 0 30 40">
+              <defs><linearGradient id="fl${i}" x1="0" x2="0" y1="0" y2="1">
+                <stop offset="0%" stop-color="#FFD400"/>
+                <stop offset="60%" stop-color="#FF8A4D"/>
+                <stop offset="100%" stop-color="#FF3366"/>
+              </linearGradient></defs>
+              <path d="M15 4 C 22 14 26 18 24 28 C 22 36 18 38 15 39 C 12 38 8 36 6 28 C 4 18 8 14 15 4 Z" fill="url(#fl${i})"/>
+            </svg>
+          </span>`;
+        }
+        html += `</div>`;
+        return html;
+      }
+      case 'hearts': {
+        let html = `<div class="zs">`;
+        const hearts = ['❤️','💛','💖'];
+        for (let i = 0; i < 4; i++) {
+          html += `<span style="left:${65 + (i%2)*8}%;top:${30 + (i*8)}%;font-size:${16+i*2}px;animation-delay:${(i*0.4).toFixed(2)}s;animation-duration:2.4s">${hearts[i%3]}</span>`;
+        }
+        html += `</div>`;
+        return html;
+      }
+      case 'questions': {
+        let html = `<div class="zs">`;
+        for (let i = 0; i < 3; i++) {
+          html += `<span style="left:${60 + i*8}%;top:${24 + i*8}%;font-size:${22+i*4}px;color:#A89BBA;font-weight:900;animation-delay:${(i*0.6).toFixed(2)}s;animation-duration:2.4s">?</span>`;
+        }
+        html += `</div>`;
+        return html;
+      }
+      case 'exclaim': {
+        return `<div class="zs">
+          <span style="left:62%;top:18%;font-size:42px;color:#FF3366;font-weight:900;animation-duration:1.4s">!</span>
+          <span style="left:72%;top:34%;font-size:28px;color:#FF8A4D;font-weight:900;animation-delay:0.3s;animation-duration:1.4s">!</span>
+        </div>`;
+      }
+      case 'tears': {
+        let html = `<div class="tears">`;
+        for (let i = 0; i < 6; i++) {
+          html += `<span style="left:${30 + (i%2)*40}%;top:${42 + Math.floor(i/2)*4}%;width:8px;height:14px;border-radius:50% 50% 50% 50%/60% 60% 40% 40%;background:linear-gradient(180deg,#A6CDE8,#5B9BD4);animation-delay:${(i*0.3).toFixed(2)}s"></span>`;
+        }
+        // small rain cloud above
+        html += `<svg style="left:50%;top:6%;transform:translateX(-50%);" width="80" height="42" viewBox="0 0 80 42">
+          <ellipse cx="40" cy="26" rx="34" ry="14" fill="#8C9CAD"/>
+          <ellipse cx="22" cy="22" rx="14" ry="12" fill="#8C9CAD"/>
+          <ellipse cx="58" cy="22" rx="14" ry="12" fill="#8C9CAD"/>
+        </svg>`;
+        html += `</div>`;
+        return html;
+      }
+      case 'zs': {
+        let html = `<div class="zs">`;
+        for (let i = 0; i < 3; i++) {
+          html += `<span style="left:${64 + i*4}%;top:${24 - i*4}%;font-size:${22+i*6}px;color:rgba(255,255,255,0.8);font-weight:900;font-family:ui-serif,Georgia,serif;animation-delay:${(i*0.6).toFixed(2)}s;animation-duration:2.6s">Z</span>`;
+        }
+        // moon
+        html += `<svg style="left:14%;top:14%;" width="36" height="36" viewBox="0 0 36 36">
+          <path d="M28 22 A 14 14 0 1 1 14 8 A 11 11 0 0 0 28 22 Z" fill="#FFE38A"/>
+        </svg>`;
+        html += `</div>`;
+        return html;
+      }
+    }
+    return '';
+  }
+
+  const mount = document.getElementById('mascots');
+  for (const c of CHARS) {
+    const row = document.createElement('section');
+    row.className = `row ${c.id}`;
+    row.dataset.char = c.id;
+    row.innerHTML = `
+      <div class="row-label">
+        <div class="badge" style="border-color:var(--${c.id})"><img src="${c.img}" alt=""/></div>
+        <div class="meta">
+          <div class="name">${c.name}</div>
+          <div class="jp">${c.jp}</div>
+        </div>
+      </div>
+      <div class="grid">
+        ${EMOTIONS.map(e => `
+          <div class="card" data-emo="${e.key}">
+            <div class="sprites">${spriteHTML(e.sprite)}</div>
+            <div class="stage">
+              <img class="mascot ${e.anim}" src="${c.img}" alt="${c.name} ${e.label}"/>
+            </div>
+            <div class="bubble">${e.line}</div>
+            <div class="label">
+              <div class="emo" style="color:var(--${c.id})">${e.label}</div>
+              <div class="line">.${e.anim}</div>
+            </div>
+          </div>
+        `).join('')}
+      </div>
+    `;
+    mount.appendChild(row);
+  }
+
+  // Legend / footer
+  const footer = document.createElement('div');
+  footer.className = 'footer';
+  footer.innerHTML = `각 카드의 <code>.label .line</code>에 표시된 클래스(<code>.happy</code>, <code>.sad</code> 등)를
+    <code>&lt;img class="mascot ..."&gt;</code> 에 그대로 붙이면 됩니다. · 9 emotions × 3 mascots`;
+  mount.appendChild(footer);
+
+  // Filter
+  document.querySelectorAll('.toolbar .pill[data-filter]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.toolbar .pill[data-filter]').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      const f = btn.dataset.filter;
+      document.querySelectorAll('.row').forEach(r => {
+        r.style.display = (f === 'all' || r.dataset.char === f) ? '' : 'none';
+      });
+    });
+  });
+
+  // Play/pause
+  const tog = document.getElementById('playToggle');
+  tog.addEventListener('click', () => {
+    document.body.classList.toggle('paused');
+    tog.textContent = document.body.classList.contains('paused') ? '▶  재생' : '⏸  일시정지';
+  });
+</script>
+</body>
+</html>

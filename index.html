@@ -1,0 +1,175 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <!-- user-scalable=no 제거 — 저시력 사용자 확대 허용 (Lighthouse 접근성). -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta name="theme-color" content="#FF5A5F" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#1A1A1A" media="(prefers-color-scheme: dark)" />
+
+    <!-- iOS PWA -->
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <meta name="apple-mobile-web-app-title" content="니혼고" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <link rel="apple-touch-icon" href="/icons/icon-192.svg" />
+    <!-- iOS 홈 화면 추가 시 splash — iPhone 모델별 PNG.
+         media query: device-width × device-height × pixel-ratio + orientation -->
+    <!-- iPhone 17 Pro Max -->
+    <link rel="apple-touch-startup-image" href="/icons/splash/splash-1290x2796.png" media="(device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)" />
+    <!-- iPhone 15/16 Pro Max, 14 Pro Max -->
+    <link rel="apple-touch-startup-image" href="/icons/splash/splash-1290x2796.png" media="(device-width: 428px) and (device-height: 926px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)" />
+    <!-- iPhone 15/16 Pro, 14 Pro -->
+    <link rel="apple-touch-startup-image" href="/icons/splash/splash-1179x2556.png" media="(device-width: 393px) and (device-height: 852px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)" />
+    <!-- iPhone 12/13/14 (6.1) -->
+    <link rel="apple-touch-startup-image" href="/icons/splash/splash-1170x2532.png" media="(device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)" />
+    <!-- iPhone 12 mini, 13 mini -->
+    <link rel="apple-touch-startup-image" href="/icons/splash/splash-1080x2340.png" media="(device-width: 360px) and (device-height: 780px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)" />
+    <!-- iPhone 11, XR -->
+    <link rel="apple-touch-startup-image" href="/icons/splash/splash-828x1792.png" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 2) and (orientation: portrait)" />
+    <!-- iPhone 11 Pro Max, XS Max -->
+    <link rel="apple-touch-startup-image" href="/icons/splash/splash-1242x2688.png" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)" />
+    <!-- iPhone 8 Plus, 7 Plus -->
+    <link rel="apple-touch-startup-image" href="/icons/splash/splash-1242x2208.png" media="(device-width: 414px) and (device-height: 736px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)" />
+    <!-- iPhone 11 Pro, XS, X -->
+    <link rel="apple-touch-startup-image" href="/icons/splash/splash-1125x2436.png" media="(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)" />
+    <!-- iPhone SE 2nd/3rd, 8, 7, 6s -->
+    <link rel="apple-touch-startup-image" href="/icons/splash/splash-750x1334.png" media="(device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2) and (orientation: portrait)" />
+    <!-- 폴백: SVG (older 또는 미매칭 디바이스) -->
+    <link rel="apple-touch-startup-image" href="/icons/icon-512.svg" />
+
+    <!-- 검색/공유 미리보기 — Open Graph + Twitter Card -->
+    <meta name="description" content="매일 조금씩 일본어를 배우는 학습 앱 — N5~N3 단어, 회화 280+, 한자 획순, AI 튜터·작문 첨삭" />
+    <meta property="og:title" content="니혼고 앱 — 매일 조금씩 일본어" />
+    <meta property="og:description" content="N5~N3 단어 600개, 회화 280+, 한자 획순, AI 튜터까지. 귀여운 마스코트와 함께 매일 조금씩." />
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="ko_KR" />
+    <meta property="og:site_name" content="니혼고 앱" />
+    <meta property="og:url" content="https://nihan-go-test.netlify.app/" />
+    <!-- 1200x630 OG 이미지 — 모든 SNS·메신저 호환 (PIL로 생성한 PNG)
+         v=2: 메신저 OG 캐시 갱신용 (이미지 내용 바뀔 때마다 버전 bump) -->
+    <meta property="og:image" content="https://nihan-go-test.netlify.app/og-image.png?v=3" />
+    <meta property="og:image:secure_url" content="https://nihan-go-test.netlify.app/og-image.png?v=3" />
+    <meta property="og:image:type" content="image/png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="니혼고 앱 — 일본어 학습" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="니혼고 앱 — 매일 조금씩 일본어" />
+    <meta name="twitter:description" content="N5~N1 단어, 회화, 한자 획순, AI 튜터까지" />
+    <meta name="twitter:image" content="https://nihan-go-test.netlify.app/og-image.png?v=3" />
+
+    <!-- 보안 -->
+    <meta http-equiv="X-Content-Type-Options" content="nosniff" />
+    <meta name="referrer" content="strict-origin-when-cross-origin" />
+
+    <!-- 폰트 self-host — preload로 LCP 영향 최소화 -->
+    <link rel="preload" href="/fonts/PretendardVariable.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="/fonts/InstrumentSerif-Italic.woff2" as="font" type="font/woff2" crossorigin />
+
+    <!-- 외부 도메인 dns-prefetch — preconnect는 즉시 사용 도메인에만.
+         Firebase 도메인은 로그인 시점에 dynamic import로 연결되므로 dns-prefetch만. -->
+    <link rel="dns-prefetch" href="https://firestore.googleapis.com" />
+    <link rel="dns-prefetch" href="https://identitytoolkit.googleapis.com" />
+    <link rel="dns-prefetch" href="https://securetoken.googleapis.com" />
+    <link rel="dns-prefetch" href="https://generativelanguage.googleapis.com" />
+    <link rel="dns-prefetch" href="https://api.murf.ai" />
+    <link rel="dns-prefetch" href="https://app.glitchtip.com" />
+    <link rel="dns-prefetch" href="https://cdn.jsdelivr.net" />
+    <link rel="dns-prefetch" href="https://plausible.io" />
+
+    <!-- Plausible Analytics — 프라이버시 친화 분석 (쿠키 없음, GDPR 자동 준수)
+         data-domain은 실제 Plausible 계정 등록 후 도메인으로 교체.
+         로컬/지원 안 되면 스크립트만 무시됨. -->
+    <script
+      defer
+      data-domain="nihan-go-test.netlify.app"
+      src="https://plausible.io/js/script.js"
+    ></script>
+    <script>
+      window.plausible =
+        window.plausible ||
+        function () {
+          ;(window.plausible.q = window.plausible.q || []).push(arguments)
+        }
+    </script>
+
+    <link rel="icon" type="image/svg+xml" href="/icons/icon-192.svg" />
+    <link rel="canonical" href="https://nihan-go-test.netlify.app/" />
+    <title>니혼고 앱 — 일본어 학습</title>
+    <!-- LCP 핵심: 인라인 스플래시 — JS 파싱 전에 즉시 페인트. React mount 시 자동 교체.
+         (SplashPage.tsx의 시각적 카피와 동일하게 유지)
+         LCP 보호: 메인 텍스트 "ことば"는 opacity 1로 시작 — scale entrance만 적용. -->
+    <style>
+      .boot-splash {
+        position: fixed; inset: 0;
+        display: flex; flex-direction: column;
+        align-items: center; justify-content: center;
+        color: #fff; overflow: hidden;
+        background: linear-gradient(160deg, #FF5A5F 0%, #FF8FB1 100%);
+        font-family: -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", system-ui, sans-serif;
+        z-index: 0;
+      }
+      .boot-splash__bubble {
+        position: absolute;
+        border-radius: 9999px;
+        background: rgba(255, 255, 255, 0.12);
+        animation: bootFloat 6s ease-in-out infinite;
+        will-change: transform;
+      }
+      .boot-splash__main {
+        font-size: 56px; font-weight: 800; letter-spacing: -2px;
+        font-family: "Hiragino Sans", "Noto Sans JP", "Zen Maru Gothic", serif;
+        animation: bootSplashIn 0.9s cubic-bezier(.2,.7,.2,1.05);
+        will-change: transform;
+        position: relative; z-index: 1;
+      }
+      .boot-splash__sub {
+        margin-top: 12px; font-size: 15px; opacity: 0; letter-spacing: 6px;
+        animation: bootFadeUp 0.6s 0.3s forwards ease-out;
+        position: relative; z-index: 1;
+      }
+      .boot-splash__brand {
+        margin-top: 8px; font-size: 12px; opacity: 0; letter-spacing: 2px;
+        animation: bootFadeUp 0.6s 0.55s forwards ease-out;
+        position: relative; z-index: 1;
+      }
+      /* LCP 친화: opacity는 1 유지, scale만 이동 — 첫 페인트에 텍스트 보임. */
+      @keyframes bootSplashIn {
+        0%   { transform: scale(0.85); }
+        55%  { transform: scale(1.04); }
+        100% { transform: scale(1); }
+      }
+      @keyframes bootFadeUp {
+        from { opacity: 0; transform: translateY(8px); }
+        to   { opacity: 0.85; transform: translateY(0); }
+      }
+      @keyframes bootFloat {
+        0%, 100% { transform: translate(0,0) scale(1); opacity: 0.35; }
+        50%      { transform: translate(18px, -28px) scale(1.12); opacity: 0.5; }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        .boot-splash__main, .boot-splash__sub, .boot-splash__brand, .boot-splash__bubble {
+          animation: none !important;
+        }
+        .boot-splash__sub, .boot-splash__brand { opacity: 0.85; }
+      }
+    </style>
+  </head>
+  <body>
+    <div id="root">
+      <div class="boot-splash" aria-hidden="true">
+        <span class="boot-splash__bubble" style="width:54px;height:54px;left:12%;top:18%;animation-delay:0s"></span>
+        <span class="boot-splash__bubble" style="width:68px;height:68px;left:78%;top:22%;animation-delay:-0.8s"></span>
+        <span class="boot-splash__bubble" style="width:82px;height:82px;left:24%;top:74%;animation-delay:-1.6s"></span>
+        <span class="boot-splash__bubble" style="width:96px;height:96px;left:62%;top:58%;animation-delay:-2.4s"></span>
+        <span class="boot-splash__bubble" style="width:110px;height:110px;left:8%;top:48%;animation-delay:-3.2s"></span>
+        <span class="boot-splash__bubble" style="width:124px;height:124px;left:70%;top:80%;animation-delay:-4s"></span>
+        <div class="boot-splash__main">ことば</div>
+        <div class="boot-splash__sub">KOTOBA</div>
+        <div class="boot-splash__brand">니혼고 앱</div>
+      </div>
+    </div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

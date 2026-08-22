@@ -1,0 +1,92 @@
+// 3 테마 토큰 — 코드베이스 themes.ts에서 추출하여 3개로 축소
+// 기본 (default), 에디토리얼 (d4-editorial), 잉크 (d6-ink)
+
+window.THEMES = {
+  default: {
+    id: 'default',
+    name: '기본',
+    nameJa: 'スタンダード',
+    desc: 'Airbnb Coral · 친근한 기본',
+    tokens: {
+      '--bg': '#FFFFFF',
+      '--surface': '#FFFFFF',
+      '--surface2': '#F7F7F7',
+      '--ink': '#222222',
+      '--ink2': '#717171',
+      '--ink3': '#B0B0B0',
+      '--primary': '#FF5A5F',
+      '--primary-hover': '#E04E52',
+      '--primary-fg': '#FFFFFF',
+      '--border': '#EBEBEB',
+      '--sakura-100': '#FFF0F0',
+      '--sakura-200': '#FFE0E1',
+      '--radius': '12px',
+      '--radius-lg': '16px',
+      '--radius-xl': '24px',
+      '--shadow': '0 6px 20px rgba(255, 90, 95, 0.20)',
+      '--shadow-card': '0 1px 3px rgba(0,0,0,0.04)',
+      '--font': '"Inter", "Noto Sans JP", system-ui, sans-serif',
+      '--font-display': '"Inter", system-ui, sans-serif',
+    },
+  },
+  editorial: {
+    id: 'editorial',
+    name: '에디토리얼',
+    nameJa: 'エディトリアル',
+    desc: '매거진 느낌, 큰 세리프 타이틀',
+    tokens: {
+      '--bg': '#FAF8F5',
+      '--surface': '#FFFFFF',
+      '--surface2': '#F2EDE3',
+      '--ink': '#1A1612',
+      '--ink2': '#6B6360',
+      '--ink3': '#A89E99',
+      '--primary': '#E83E7A',
+      '--primary-hover': '#C92C66',
+      '--primary-fg': '#FFFFFF',
+      '--border': '#E6DED5',
+      '--sakura-100': '#F2EDE3',
+      '--sakura-200': '#EBE3D2',
+      '--radius': '6px',
+      '--radius-lg': '10px',
+      '--radius-xl': '14px',
+      '--shadow': '0 3px 12px rgba(232, 62, 122, 0.12)',
+      '--shadow-card': '0 1px 2px rgba(0,0,0,0.04)',
+      '--font': '"Pretendard", "Noto Sans JP", system-ui, sans-serif',
+      '--font-display': '"Instrument Serif", "Noto Serif JP", Georgia, serif',
+    },
+  },
+  ink: {
+    id: 'ink',
+    name: '잉크',
+    nameJa: 'インク',
+    desc: '미니멀 모노톤, 검정 CTA',
+    tokens: {
+      '--bg': '#FFFFFF',
+      '--surface': '#FFFFFF',
+      '--surface2': '#F5F5F3',
+      '--ink': '#0E0E10',
+      '--ink2': '#6B6B6E',
+      '--ink3': '#A0A0A3',
+      '--primary': '#0E0E10',
+      '--primary-hover': '#2D2D2D',
+      '--primary-fg': '#FFFFFF',
+      '--border': '#E8E8E5',
+      '--sakura-100': '#F5F5F3',
+      '--sakura-200': '#EBEAE7',
+      '--radius': '14px',
+      '--radius-lg': '18px',
+      '--radius-xl': '22px',
+      '--shadow': '0 6px 20px rgba(14, 14, 16, 0.18)',
+      '--shadow-card': '0 1px 2px rgba(0,0,0,0.04)',
+      '--font': '"Pretendard", "Noto Sans JP", system-ui, sans-serif',
+      '--font-display': '"Pretendard", system-ui, sans-serif',
+    },
+  },
+};
+
+// CSS string for applying a theme to a scope
+window.themeStyle = function(themeId) {
+  const t = window.THEMES[themeId];
+  return Object.entries(t.tokens).map(([k, v]) => `${k}: ${v}`).join('; ');
+};

@@ -1,0 +1,573 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Level Badges & Progress — KOTOBA</title>
+<style>
+  :root {
+    --bg: #F1ECEC;
+    --ink: #1A1A1A;
+    --muted: #6B6B6B;
+    --line: #E5DCE0;
+    --primary: #FF3366;
+
+    /* per-level palette */
+    --lv1: #C5BCD0;  /* dust / quiet start */
+    --lv2: #7FB8E6;  /* sky */
+    --lv3: #2EBD6B;  /* leaf */
+    --lv4: #F4B36A;  /* honey */
+    --lv5: #FF8A4D;  /* sunset */
+    --lv6: #FF3366;  /* crimson */
+    --lv7: #1A1A1A;  /* obsidian */
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; background: var(--bg); color: var(--ink);
+    font-family: -apple-system, "SF Pro Display", "Pretendard", "Noto Sans KR", system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased; }
+
+  header { padding: 56px 40px 24px; max-width: 1280px; margin: 0 auto; }
+  .eyebrow { font-size: 11px; letter-spacing: 3px; color: var(--primary); font-weight: 800; }
+  h1 { margin: 8px 0 8px; font-size: 40px; font-weight: 800; letter-spacing: -1px; line-height: 1.15; }
+  .lede { color: var(--muted); font-size: 15px; line-height: 1.6; max-width: 640px; }
+
+  main { max-width: 1280px; margin: 0 auto; padding: 8px 40px 80px; }
+
+  .section { margin: 48px 0 18px; display: flex; align-items: baseline; gap: 12px; }
+  .section h2 { margin: 0; font-size: 13px; letter-spacing: 2.5px; color: var(--muted); font-weight: 800; text-transform: uppercase; }
+  .section .hint { font-size: 12px; color: var(--muted); }
+
+  /* ─────────────── A. Badge gallery ─────────────── */
+  .gallery {
+    display: grid; gap: 16px;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  }
+  .gcard {
+    background: #fff; border-radius: 24px; padding: 22px 18px 18px;
+    display: flex; flex-direction: column; align-items: center; gap: 14px;
+    transition: transform .25s, box-shadow .25s;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+  }
+  .gcard:hover { transform: translateY(-3px); box-shadow: 0 14px 30px rgba(0,0,0,0.08); }
+  .gcard .label { text-align: center; }
+  .gcard .lv {
+    font-size: 11px; letter-spacing: 2px; font-weight: 800;
+    color: var(--accent);
+  }
+  .gcard .nm { font-size: 17px; font-weight: 800; letter-spacing: -0.3px; margin-top: 2px; }
+  .gcard .xp {
+    margin-top: 8px; padding: 4px 10px; border-radius: 999px;
+    background: #F4F4F4; font-size: 11px; font-weight: 700; color: var(--muted);
+    font-family: ui-monospace, SF Mono, monospace;
+  }
+
+  .badge { width: 116px; height: 116px; position: relative; }
+  .badge svg { width: 100%; height: 100%; overflow: visible; }
+
+  /* ─── Badge intro animations ─── */
+  @keyframes rotateSlow { to { transform: rotate(360deg); } }
+  @keyframes badgeIdle {
+    0%, 100% { transform: translateY(0); }
+    50%      { transform: translateY(-4px); }
+  }
+  .badge { animation: badgeIdle 3s ease-in-out infinite; }
+  .badge.rotate svg > g.spin { animation: rotateSlow 18s linear infinite; transform-origin: center; }
+
+  /* ─────────────── B. Vertical journey path ─────────────── */
+  .journey {
+    background: #fff; border-radius: 28px; padding: 32px 24px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+  }
+  .j-track {
+    position: relative; padding: 12px 0;
+  }
+  .j-row {
+    display: grid; grid-template-columns: 88px 1fr; gap: 18px;
+    padding: 14px 8px; align-items: center;
+    position: relative;
+  }
+  .j-row .b { width: 88px; height: 88px; position: relative; z-index: 2; }
+  .j-row .b svg { width: 100%; height: 100%; overflow: visible; }
+  .j-row.locked .b { filter: grayscale(0.8) brightness(0.95); opacity: 0.55; }
+  .j-row .info { display: flex; flex-direction: column; gap: 4px; }
+  .j-row .head {
+    display: flex; align-items: center; gap: 10px;
+    font-size: 18px; font-weight: 800; letter-spacing: -0.4px;
+  }
+  .j-row .head .pill {
+    font-size: 10px; padding: 3px 8px; border-radius: 999px;
+    background: var(--accent); color: #fff; font-weight: 800;
+    letter-spacing: 1px;
+  }
+  .j-row.locked .head .pill { background: #DDD; color: #fff; }
+  .j-row .head .pillCur { background: #FFF1F5; color: var(--primary); }
+  .j-row.current .head .pill { background: var(--primary); color: #fff;
+    animation: pulsePill 1.6s ease-in-out infinite; }
+  .j-row .sub { font-size: 12px; color: var(--muted); }
+  .j-row .progressLine { display: flex; align-items: center; gap: 10px; margin-top: 8px; }
+  .j-row .progressLine .bar {
+    flex: 1; height: 6px; border-radius: 6px; background: #EFEAEC; overflow: hidden; position: relative;
+  }
+  .j-row .progressLine .bar .fill {
+    position: absolute; inset: 0;
+    background: linear-gradient(90deg, var(--primary), #FF8FB1);
+    border-radius: 6px; transform-origin: left;
+    animation: fillBar 1.6s 0.2s cubic-bezier(0.2, 0.7, 0.2, 1.05) both;
+  }
+  .j-row .progressLine .num { font-size: 11px; font-weight: 700; color: var(--muted); font-family: ui-monospace, SF Mono, monospace; }
+
+  /* dotted/solid connector between rows */
+  .j-track::before {
+    content: ''; position: absolute; left: 52px; top: 12px; bottom: 12px;
+    width: 3px; background: repeating-linear-gradient(180deg, var(--line) 0 6px, transparent 6px 12px);
+    z-index: 0; border-radius: 3px;
+  }
+  /* solid stretch up to current */
+  .j-track .solid {
+    position: absolute; left: 52px; top: 12px;
+    width: 3px; background: var(--primary); z-index: 1; border-radius: 3px;
+    box-shadow: 0 0 12px rgba(255,51,102,0.4);
+  }
+
+  @keyframes pulsePill {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(255,51,102,0.6); }
+    50%      { box-shadow: 0 0 0 8px rgba(255,51,102,0); }
+  }
+  @keyframes fillBar {
+    from { transform: scaleX(0); }
+    to   { transform: scaleX(var(--pct, 0.32)); }
+  }
+
+  /* ─────────────── C. Mountain horizontal stepper ─────────────── */
+  .mountain {
+    background: linear-gradient(180deg, #FFF6F9 0%, #fff 60%);
+    border-radius: 28px; padding: 36px 24px 28px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.04); position: relative;
+    overflow: hidden;
+  }
+  .m-track { position: relative; height: 230px; }
+  .m-curve { position: absolute; inset: 0; }
+  .m-curve svg { width: 100%; height: 100%; }
+  .m-node {
+    position: absolute; transform: translate(-50%, -50%);
+    width: 60px; height: 60px;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .m-node .b { width: 56px; height: 56px; position: relative; z-index: 2; }
+  .m-node .b svg { width: 100%; height: 100%; overflow: visible; }
+  .m-node.locked .b { filter: grayscale(0.85); opacity: 0.45; }
+  .m-node .tag {
+    position: absolute; bottom: -28px; left: 50%; transform: translateX(-50%);
+    font-size: 10px; font-weight: 800; letter-spacing: 1px;
+    color: var(--ink); white-space: nowrap;
+  }
+  .m-node .tag em { font-style: normal; color: var(--muted); margin-left: 4px; font-weight: 600; }
+  .m-node.current .tag { color: var(--primary); }
+
+  /* current spotlight */
+  .m-node.current::after {
+    content: ''; position: absolute; inset: -10px; border-radius: 50%;
+    border: 2px dashed var(--primary);
+    animation: rotateSlow 20s linear infinite;
+  }
+
+  /* ─────────────── D. Compact card variants ─────────────── */
+  .compact {
+    display: grid; gap: 14px;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  }
+  .ccard {
+    background: #fff; border-radius: 18px; padding: 14px;
+    display: flex; align-items: center; gap: 14px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+  }
+  .ccard .b { width: 56px; height: 56px; flex-shrink: 0; }
+  .ccard .b svg { width: 100%; height: 100%; overflow: visible; }
+  .ccard .lv {
+    font-size: 10px; letter-spacing: 2px; font-weight: 800;
+    color: var(--accent);
+  }
+  .ccard .nm { font-size: 15px; font-weight: 800; letter-spacing: -0.2px; }
+  .ccard .right {
+    flex: 1; display: flex; flex-direction: column; gap: 4px;
+  }
+  .ccard .progress {
+    height: 6px; border-radius: 6px; background: #EFEAEC; overflow: hidden;
+    position: relative;
+  }
+  .ccard .progress .fill {
+    position: absolute; inset: 0;
+    background: linear-gradient(90deg, var(--accent), color-mix(in oklab, var(--accent) 60%, #fff));
+    border-radius: 6px; transform-origin: left;
+  }
+
+  /* ─────────────── E. Showcase tile ─────────────── */
+  .showcase {
+    background: #161628; color: #fff; border-radius: 28px; padding: 40px 32px;
+    display: grid; grid-template-columns: 240px 1fr; gap: 28px;
+    align-items: center;
+    position: relative; overflow: hidden;
+  }
+  .showcase::before {
+    content: ''; position: absolute; top: -80px; right: -80px;
+    width: 280px; height: 280px; border-radius: 50%;
+    background: radial-gradient(circle, var(--primary) 0%, transparent 70%);
+    opacity: 0.5;
+  }
+  .showcase .big { width: 240px; height: 240px; position: relative; z-index: 2; }
+  .showcase .big svg { width: 100%; height: 100%; overflow: visible; }
+  .showcase .meta { position: relative; z-index: 2; }
+  .showcase .eyebrow2 { font-size: 11px; letter-spacing: 3px; color: var(--primary); font-weight: 800; }
+  .showcase h3 { margin: 8px 0 12px; font-size: 36px; font-weight: 800; letter-spacing: -0.8px; line-height: 1.1; }
+  .showcase p { margin: 0 0 18px; font-size: 14px; line-height: 1.6; color: rgba(255,255,255,0.7); max-width: 460px; }
+  .showcase .row { display: flex; gap: 18px; }
+  .showcase .stat .lbl { font-size: 10px; color: rgba(255,255,255,0.5); letter-spacing: 2px; font-weight: 800; }
+  .showcase .stat .val { font-size: 22px; font-weight: 800; letter-spacing: -0.4px; margin-top: 2px; }
+  .showcase .bigBar { height: 8px; border-radius: 8px; background: rgba(255,255,255,0.08); overflow: hidden; margin: 18px 0 8px; position: relative; }
+  .showcase .bigBar .f { position: absolute; inset: 0; background: linear-gradient(90deg, var(--primary), #FF8FB1); border-radius: 8px; transform-origin: left; transform: scaleX(0.32);
+    animation: fillBar 1.8s 0.3s cubic-bezier(0.2,0.7,0.2,1.05) both; --pct: 0.32; }
+  .showcase .next { font-size: 12px; color: rgba(255,255,255,0.6); font-family: ui-monospace, SF Mono, monospace; }
+
+  /* shake on hover */
+  .gcard:hover .badge,
+  .ccard:hover .b { animation: bigCheer 0.6s ease-in-out; }
+  @keyframes bigCheer {
+    0%, 100% { transform: rotate(0); }
+    25%      { transform: rotate(-8deg) scale(1.08); }
+    75%      { transform: rotate(8deg) scale(1.08); }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="eyebrow">KOTOBA · LEVEL SYSTEM</div>
+  <h1>7단계 레벨 뱃지<br/>+ 진행 시각화</h1>
+  <p class="lede">입문자부터 마스터까지 7단계의 여정. 각 레벨마다 고유한 색과 형태를 가진 뱃지와,
+    내가 어디까지 왔는지 한눈에 보이는 프로그레스 컴포넌트.</p>
+</header>
+
+<main>
+
+  <!-- E. Featured showcase -->
+  <div class="showcase" style="margin-top: 12px;">
+    <div class="big" id="featuredBadge"></div>
+    <div class="meta">
+      <div class="eyebrow2">CURRENT LEVEL · LV.1</div>
+      <h3>입문자<br/>의 발걸음</h3>
+      <p>여정의 첫걸음. 매일 5분씩만 꾸준히 하면, 일주일이면 다음 레벨이에요.
+        지금까지 32 XP를 모았어요.</p>
+      <div class="row">
+        <div class="stat"><div class="lbl">현재 XP</div><div class="val">32</div></div>
+        <div class="stat"><div class="lbl">다음까지</div><div class="val">68 XP</div></div>
+        <div class="stat"><div class="lbl">진행률</div><div class="val">32%</div></div>
+      </div>
+      <div class="bigBar"><div class="f"></div></div>
+      <div class="next">Lv.2 초보자까지 · 약 7일</div>
+    </div>
+  </div>
+
+  <!-- A. Full gallery -->
+  <div class="section">
+    <h2>A · 뱃지 갤러리</h2>
+    <span class="hint">각 레벨마다 고유한 형태 · 색 · 심볼</span>
+  </div>
+  <div class="gallery" id="galleryGrid"></div>
+
+  <!-- B. Vertical journey -->
+  <div class="section">
+    <h2>B · 여정 (세로형)</h2>
+    <span class="hint">전체 경로 + 진행 표시</span>
+  </div>
+  <div class="journey">
+    <div class="j-track" id="jTrack"></div>
+  </div>
+
+  <!-- C. Mountain stepper -->
+  <div class="section">
+    <h2>C · 산 등반 (가로형)</h2>
+    <span class="hint">스토리텔링 풍 · 하단 위젯이나 결과화면용</span>
+  </div>
+  <div class="mountain">
+    <div class="m-track">
+      <div class="m-curve">
+        <svg viewBox="0 0 1000 230" preserveAspectRatio="none">
+          <defs>
+            <linearGradient id="curveG" x1="0" x2="1" y1="0" y2="0">
+              <stop offset="0%" stop-color="#FF3366"/>
+              <stop offset="50%" stop-color="#FF8FB1"/>
+              <stop offset="100%" stop-color="#FFD9E2"/>
+            </linearGradient>
+          </defs>
+          <!-- mountain silhouette behind -->
+          <path d="M0 200 L120 190 L260 150 L420 170 L580 120 L740 140 L880 70 L1000 100 L1000 230 L0 230 Z"
+            fill="#FFE6EC"/>
+          <path d="M0 215 L130 200 L290 175 L460 195 L620 150 L790 165 L920 95 L1000 120 L1000 230 L0 230 Z"
+            fill="#FFD0DA"/>
+          <!-- dashed climb path -->
+          <path d="M40 200 Q200 200 220 130 Q240 60 380 170 Q520 280 580 100 Q640 -40 780 130 Q920 260 960 60"
+            fill="none" stroke="#FFB0BC" stroke-width="3" stroke-dasharray="6 6"/>
+          <!-- progress on path: solid up to lv1 -->
+          <path id="climbDone" d="M40 200 Q200 200 220 130"
+            fill="none" stroke="url(#curveG)" stroke-width="4" stroke-linecap="round"/>
+        </svg>
+      </div>
+      <div id="mNodes"></div>
+    </div>
+  </div>
+
+  <!-- D. Compact list -->
+  <div class="section">
+    <h2>D · 컴팩트 카드</h2>
+    <span class="hint">설정 페이지 / 알림 등에 활용</span>
+  </div>
+  <div class="compact" id="compactGrid"></div>
+
+</main>
+
+<script>
+  // ─── Data ───
+  const LEVELS = [
+    { id: 1, name: '입문자',  jp: 'Sprout',     xp: 0,    next: 100,  color: '#C5BCD0', sub: '여정의 첫걸음' },
+    { id: 2, name: '초보자',  jp: 'Beginner',   xp: 100,  next: 300,  color: '#7FB8E6', sub: '단어와 친해지기' },
+    { id: 3, name: '학습자',  jp: 'Learner',    xp: 300,  next: 600,  color: '#2EBD6B', sub: '문장이 보이기 시작' },
+    { id: 4, name: '중급자',  jp: 'Intermediate', xp: 600, next: 1000, color: '#F4B36A', sub: '대화의 흐름을 익힘' },
+    { id: 5, name: '숙련자',  jp: 'Skilled',    xp: 1000, next: 1500, color: '#FF8A4D', sub: '자연스러운 표현' },
+    { id: 6, name: '전문가',  jp: 'Expert',     xp: 1500, next: 2000, color: '#FF3366', sub: '깊이 있는 이해' },
+    { id: 7, name: '마스터',  jp: 'Master',     xp: 2000, next: null, color: '#1A1A1A', sub: '경지에 다다름' },
+  ];
+
+  const CURRENT_LV = 1;
+  const CURRENT_XP = 32;
+
+  // ─── Badge SVGs ───
+  // Each badge: container <svg viewBox="0 0 100 100">, two-tone with level color, distinct shape per level
+  function badgeSvg(lv, size = 'lg') {
+    const c = lv.color;
+    const dark = '#1A1A1A';
+    const ring = `<g class="spin">
+      ${[0,1,2,3,4,5,6,7].map(i => `
+        <circle cx="50" cy="50" r="46"
+          fill="none" stroke="${c}" stroke-width="1"
+          stroke-dasharray="2 6" opacity="0.6"
+          transform="rotate(${i*45} 50 50)"/>
+      `).join('')}
+    </g>`;
+    const star = (cx, cy, r, fill, rot = 0) => {
+      let pts = '';
+      for (let i = 0; i < 10; i++) {
+        const a = (Math.PI * i) / 5 - Math.PI / 2 + (rot * Math.PI / 180);
+        const rr = i % 2 === 0 ? r : r * 0.45;
+        const x = cx + Math.cos(a) * rr;
+        const y = cy + Math.sin(a) * rr;
+        pts += `${x.toFixed(1)},${y.toFixed(1)} `;
+      }
+      return `<polygon points="${pts}" fill="${fill}"/>`;
+    };
+
+    const center = {
+      1: `<!-- 입문자 — 새싹 -->
+        <path d="M50 70 C 50 60 42 54 36 56 C 38 64 44 68 50 70 Z M50 70 C 50 60 58 54 64 56 C 62 64 56 68 50 70 Z M50 70 L50 48"
+          fill="${c}" stroke="${dark}" stroke-width="1.2"/>
+        <path d="M50 70 L50 48" stroke="${dark}" stroke-width="2" fill="none" stroke-linecap="round"/>`,
+      2: `<!-- 초보자 — 별 1개 -->
+        ${star(50, 50, 16, c)}
+        ${star(50, 50, 8, '#fff', 36)}`,
+      3: `<!-- 학습자 — 책 -->
+        <path d="M30 36 L50 32 L70 36 L70 64 L50 60 L30 64 Z" fill="${c}" stroke="${dark}" stroke-width="1.5"/>
+        <line x1="50" y1="32" x2="50" y2="60" stroke="${dark}" stroke-width="1.5"/>
+        <line x1="36" y1="44" x2="46" y2="42" stroke="#fff" stroke-width="1.6" stroke-linecap="round"/>
+        <line x1="36" y1="50" x2="46" y2="48" stroke="#fff" stroke-width="1.6" stroke-linecap="round"/>
+        <line x1="54" y1="42" x2="64" y2="44" stroke="#fff" stroke-width="1.6" stroke-linecap="round"/>
+        <line x1="54" y1="48" x2="64" y2="50" stroke="#fff" stroke-width="1.6" stroke-linecap="round"/>`,
+      4: `<!-- 중급자 — 다이아 -->
+        <path d="M50 28 L72 50 L50 72 L28 50 Z" fill="${c}" stroke="${dark}" stroke-width="1.5"/>
+        <path d="M50 36 L64 50 L50 64 L36 50 Z" fill="#fff" opacity="0.85"/>
+        <path d="M50 36 L50 64 M36 50 L64 50" stroke="${c}" stroke-width="1.2"/>`,
+      5: `<!-- 숙련자 — 불꽃 -->
+        <path d="M50 28 C 60 38 64 44 62 56 C 60 66 56 70 50 72 C 44 70 40 66 38 56 C 36 44 40 38 50 28 Z" fill="${c}" stroke="${dark}" stroke-width="1.4"/>
+        <path d="M50 44 C 54 48 56 52 55 58 C 54 64 52 66 50 67 C 48 66 46 64 45 58 C 44 52 46 48 50 44 Z" fill="#FFE38A"/>`,
+      6: `<!-- 전문가 — 토리이 -->
+        <g stroke="${dark}" stroke-width="1.5" stroke-linecap="round">
+          <line x1="28" y1="34" x2="72" y2="34"/>
+          <line x1="30" y1="40" x2="70" y2="40"/>
+          <line x1="36" y1="40" x2="36" y2="70"/>
+          <line x1="64" y1="40" x2="64" y2="70"/>
+          <line x1="40" y1="48" x2="60" y2="48"/>
+        </g>
+        <rect x="28" y="34" width="44" height="6" fill="${c}"/>
+        <rect x="36" y="40" width="28" height="3" fill="${c}" opacity="0.7"/>`,
+      7: `<!-- 마스터 — 왕관 + 별 -->
+        <path d="M28 56 L34 36 L42 50 L50 30 L58 50 L66 36 L72 56 L28 56 Z" fill="${c}" stroke="${dark}" stroke-width="1.5" stroke-linejoin="round"/>
+        <rect x="28" y="56" width="44" height="8" fill="${c}" stroke="${dark}" stroke-width="1.5"/>
+        <circle cx="34" cy="36" r="2.4" fill="#FFD400" stroke="${dark}" stroke-width="0.8"/>
+        <circle cx="50" cy="30" r="2.4" fill="#FFD400" stroke="${dark}" stroke-width="0.8"/>
+        <circle cx="66" cy="36" r="2.4" fill="#FFD400" stroke="${dark}" stroke-width="0.8"/>
+        ${star(50, 52, 4, '#FFD400', 0)}`,
+    };
+
+    // distinct frame per level
+    const frame = (() => {
+      switch (lv.id) {
+        case 1: // soft circle
+          return `<circle cx="50" cy="50" r="38" fill="#fff" stroke="${c}" stroke-width="2"/>`;
+        case 2: // hex
+          return `<path d="M50 12 L84 32 L84 68 L50 88 L16 68 L16 32 Z" fill="#fff" stroke="${c}" stroke-width="2"/>`;
+        case 3: // shield
+          return `<path d="M50 12 L84 22 L82 58 C 82 76 70 84 50 90 C 30 84 18 76 18 58 L16 22 Z" fill="#fff" stroke="${c}" stroke-width="2"/>`;
+        case 4: // octagon
+          return `<path d="M30 14 L70 14 L86 30 L86 70 L70 86 L30 86 L14 70 L14 30 Z" fill="#fff" stroke="${c}" stroke-width="2"/>`;
+        case 5: // sunburst + circle
+          return `${[0,1,2,3,4,5,6,7,8,9,10,11].map(i =>
+            `<line x1="50" y1="50" x2="${50 + Math.cos(i*Math.PI/6) * 44}" y2="${50 + Math.sin(i*Math.PI/6) * 44}" stroke="${c}" stroke-width="3" stroke-linecap="round" opacity="0.4"/>`
+          ).join('')}
+          <circle cx="50" cy="50" r="36" fill="#fff" stroke="${c}" stroke-width="2.5"/>`;
+        case 6: // double ring
+          return `<circle cx="50" cy="50" r="44" fill="none" stroke="${c}" stroke-width="2" stroke-dasharray="4 4"/>
+                  <circle cx="50" cy="50" r="38" fill="#fff" stroke="${c}" stroke-width="3"/>`;
+        case 7: // black ornate
+          return `<circle cx="50" cy="50" r="44" fill="none" stroke="#FFD400" stroke-width="1.5"/>
+                  <circle cx="50" cy="50" r="40" fill="${c}" stroke="#FFD400" stroke-width="2"/>
+                  ${[0,90,180,270].map(a => `<circle cx="${50 + Math.cos(a*Math.PI/180)*44}" cy="${50 + Math.sin(a*Math.PI/180)*44}" r="2.6" fill="#FFD400"/>`).join('')}`;
+      }
+    })();
+
+    // Center content visibility — for dark master, invert text/strokes
+    const cnt = lv.id === 7
+      ? center[7].replace(new RegExp(dark, 'g'), '#FFD400').replace(new RegExp(c, 'g'), '#FFD400')
+      : center[lv.id];
+
+    return `<svg viewBox="0 0 100 100">
+      ${lv.id >= 5 ? ring : ''}
+      ${frame}
+      ${cnt}
+    </svg>`;
+  }
+
+  // ─── A. Gallery ───
+  const galleryGrid = document.getElementById('galleryGrid');
+  LEVELS.forEach(lv => {
+    const card = document.createElement('div');
+    card.className = 'gcard';
+    card.style.setProperty('--accent', lv.color);
+    card.innerHTML = `
+      <div class="badge ${lv.id >= 5 ? 'rotate' : ''}">${badgeSvg(lv)}</div>
+      <div class="label">
+        <div class="lv">LV.${lv.id} · ${lv.jp.toUpperCase()}</div>
+        <div class="nm">${lv.name}</div>
+      </div>
+      <div class="xp">${lv.next ? lv.xp + '–' + (lv.next - 1) + ' XP' : '2000+ XP'}</div>
+    `;
+    galleryGrid.appendChild(card);
+  });
+
+  // ─── E. Featured (Lv.1) ───
+  document.getElementById('featuredBadge').innerHTML = badgeSvg(LEVELS[CURRENT_LV - 1]);
+
+  // ─── B. Vertical journey ───
+  const jTrack = document.getElementById('jTrack');
+  LEVELS.forEach(lv => {
+    const isCurrent = lv.id === CURRENT_LV;
+    const isAchieved = lv.id < CURRENT_LV;
+    const isLocked = lv.id > CURRENT_LV;
+    const row = document.createElement('div');
+    row.className = `j-row ${isLocked ? 'locked' : ''} ${isCurrent ? 'current' : ''}`;
+    row.style.setProperty('--accent', lv.color);
+    const pillText = isAchieved ? '달성' : isCurrent ? '진행 중' : '잠김';
+
+    let progress = '';
+    if (isCurrent && lv.next) {
+      const pct = ((CURRENT_XP - lv.xp) / (lv.next - lv.xp));
+      progress = `
+        <div class="progressLine">
+          <div class="bar"><div class="fill" style="--pct: ${pct.toFixed(2)}"></div></div>
+          <div class="num">${CURRENT_XP}/${lv.next} XP</div>
+        </div>`;
+    }
+
+    row.innerHTML = `
+      <div class="b">${badgeSvg(lv)}</div>
+      <div class="info">
+        <div class="head">
+          Lv.${lv.id} <span style="color:${lv.color}">${lv.name}</span>
+          <span class="pill">${pillText}</span>
+        </div>
+        <div class="sub">${lv.sub} · ${lv.next ? `${lv.xp} ~ ${lv.next - 1} XP` : '2000+ XP'}</div>
+        ${progress}
+      </div>
+    `;
+    jTrack.appendChild(row);
+  });
+  // solid connector up to current row
+  setTimeout(() => {
+    const rows = jTrack.querySelectorAll('.j-row');
+    if (rows.length && CURRENT_LV >= 1) {
+      const firstTop = rows[0].offsetTop + 44;
+      const curTop = rows[CURRENT_LV - 1].offsetTop + 44;
+      const solid = document.createElement('div');
+      solid.className = 'solid';
+      solid.style.top = firstTop + 'px';
+      solid.style.height = (curTop - firstTop) + 'px';
+      jTrack.appendChild(solid);
+    }
+  }, 50);
+
+  // ─── C. Mountain stepper ───
+  // Positions roughly mapped along the dashed climb path (percent of width, top px)
+  const M_POSITIONS = [
+    { x: 4,   y: 92 },
+    { x: 22,  y: 56 },
+    { x: 38,  y: 78 },
+    { x: 56,  y: 50 },
+    { x: 70,  y: 80 },
+    { x: 82,  y: 56 },
+    { x: 96,  y: 26 },
+  ];
+  const mNodes = document.getElementById('mNodes');
+  LEVELS.forEach((lv, i) => {
+    const pos = M_POSITIONS[i];
+    const isCurrent = lv.id === CURRENT_LV;
+    const isLocked = lv.id > CURRENT_LV;
+    const node = document.createElement('div');
+    node.className = `m-node ${isLocked ? 'locked' : ''} ${isCurrent ? 'current' : ''}`;
+    node.style.left = pos.x + '%';
+    node.style.top = pos.y + '%';
+    node.innerHTML = `
+      <div class="b">${badgeSvg(lv)}</div>
+      <div class="tag">Lv.${lv.id} ${lv.name}<em>${lv.next ? lv.xp + 'XP' : 'MAX'}</em></div>
+    `;
+    mNodes.appendChild(node);
+  });
+
+  // ─── D. Compact cards ───
+  const compactGrid = document.getElementById('compactGrid');
+  LEVELS.forEach(lv => {
+    const isCurrent = lv.id === CURRENT_LV;
+    let pct = 0;
+    if (lv.id < CURRENT_LV) pct = 1;
+    else if (lv.id > CURRENT_LV) pct = 0;
+    else pct = lv.next ? (CURRENT_XP - lv.xp) / (lv.next - lv.xp) : 1;
+
+    const card = document.createElement('div');
+    card.className = 'ccard';
+    card.style.setProperty('--accent', lv.color);
+    card.innerHTML = `
+      <div class="b">${badgeSvg(lv)}</div>
+      <div class="right">
+        <div style="display:flex;justify-content:space-between;align-items:baseline;gap:8px">
+          <div>
+            <div class="lv">LV.${lv.id}</div>
+            <div class="nm">${lv.name}</div>
+          </div>
+          <div style="font-size:11px;color:var(--muted);font-family:ui-monospace,SF Mono,monospace">
+            ${lv.id < CURRENT_LV ? '✓ 달성' : lv.id === CURRENT_LV ? CURRENT_XP + '/' + (lv.next || lv.xp) : (lv.next ? lv.xp : '2000+') + ' XP'}
+          </div>
+        </div>
+        <div class="progress"><div class="fill" style="transform: scaleX(${pct.toFixed(2)})"></div></div>
+      </div>
+    `;
+    compactGrid.appendChild(card);
+  });
+</script>
+</body>
+</html>

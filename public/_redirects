@@ -1,0 +1,3 @@
+# SPA fallback — React Router로 직접 URL 진입 시 index.html 서빙
+# netlify.toml의 [[redirects]]도 같은 역할이지만 이 파일이 더 우선순위 높음
+/*    /index.html   200

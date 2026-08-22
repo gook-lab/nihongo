@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://nihan-go-test.netlify.app/sitemap.xml

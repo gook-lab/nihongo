@@ -1,0 +1,809 @@
+/* 폰트 — self-hosted (CDN 의존 제거, 오프라인/네트워크 독립).
+ *   · Pretendard Variable (2MB, 한국어 + Latin) — 모든 테마 본문
+ *   · Instrument Serif Italic (16KB Latin subset) — editorial 테마 디스플레이만
+ *   · 일본어는 시스템 폴백 (Hiragino Sans / Noto Sans JP)
+ *   · font-display: swap → FOIT 방지, LCP 영향 최소화
+ */
+@font-face {
+  font-family: 'Pretendard Variable';
+  font-weight: 45 920;
+  font-style: normal;
+  font-display: swap;
+  src: url('/fonts/PretendardVariable.woff2') format('woff2-variations');
+}
+@font-face {
+  font-family: 'Instrument Serif';
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+  src: url('/fonts/InstrumentSerif-Italic.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+20AC, U+2122;
+}
+
+@import "tailwindcss";
+
+@theme {
+  /* =============================================
+   * Airbnb-Inspired Design System
+   * ============================================= */
+
+  /* Primary Colors - Airbnb Rausch (Coral) */
+  --color-primary: #FF5A5F;
+  --color-primary-hover: #E04E52;
+  --color-primary-foreground: #FFFFFF;
+
+  /* Secondary Colors - Airbnb Kazan (Teal) */
+  --color-secondary: #00A699;
+  --color-secondary-hover: #008F84;
+  --color-secondary-foreground: #FFFFFF;
+
+  /* Accent Colors */
+  --color-accent-orange: #FC642D;
+  --color-accent-yellow: #FFB400;
+  --color-accent-purple: #914669;
+  --color-accent-blue: #007A87;
+
+  /* Neutral Colors */
+  --color-background: #FFFFFF;
+  --color-foreground: #222222;
+  --color-card: #FFFFFF;
+  --color-card-foreground: #222222;
+  --color-popover: #FFFFFF;
+  --color-popover-foreground: #222222;
+
+  /* Text Colors */
+  --color-text-primary: #222222;
+  --color-text-secondary: #717171;
+  --color-text-tertiary: #B0B0B0;
+
+  /* Muted */
+  --color-muted: #F7F7F7;
+  --color-muted-foreground: #717171;
+
+  /* Accent (UI) */
+  --color-accent: #F7F7F7;
+  --color-accent-foreground: #222222;
+
+  /* Destructive */
+  --color-destructive: #C13515;
+  --color-destructive-foreground: #FFFFFF;
+
+  /* Success (정답, 완료 등) */
+  --color-success: #2EBD6B;
+  --color-success-light: #ECFBF3;
+  --color-success-dark: #1A8A4A;
+
+  /* Warning (주의, 안내 등) */
+  --color-warning: #F59E0B;
+  --color-warning-light: #FEF6E5;
+  --color-warning-dark: #B26B00;
+
+  /* Error light/dark (Toast 등) */
+  --color-error-light: #FEE7E5;
+  --color-error-dark: #8A1B0E;
+
+  /* Borders */
+  --color-border: #DDDDDD;
+  --color-border-light: #EBEBEB;
+  --color-input: #DDDDDD;
+  --color-ring: #222222;
+
+  /* Legacy sakura colors - mapped to new palette */
+  --color-sakura-100: #FFF0F0;
+  --color-sakura-200: #FFE0E1;
+  --color-sakura-500: #FF5A5F;
+  --color-sakura-600: #E04E52;
+  --color-sakura-700: #C13515;
+  --color-sakura-900: rgba(255, 90, 95, 0.1);
+
+  /* Border Radius - Airbnb style */
+  --radius: 12px;
+  --radius-sm: 8px;
+  --radius-lg: 16px;
+  --radius-xl: 24px;
+  --radius-full: 9999px;
+
+  /* Shadows - Airbnb style */
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.08);
+  --shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+  --shadow-md: 0 6px 16px rgba(0, 0, 0, 0.12);
+  --shadow-lg: 0 8px 28px rgba(0, 0, 0, 0.16);
+  --shadow-xl: 0 16px 40px rgba(0, 0, 0, 0.24);
+  /* Primary 색상 기반 소프트 글로우 — themes.ts에서 테마별로 override */
+  --shadow-primary-glow: 0 6px 20px rgba(255, 90, 95, 0.30);
+
+  /* Fonts — 시스템 폰트만 사용 (Google Fonts 제거로 LCP 3.8초 절감)
+     macOS/iOS: SF Pro + Apple SD Gothic Neo / Android: system-ui (Roboto + Noto) */
+  --font-sans: -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Pretendard", "Noto Sans KR", "Noto Sans JP", "Hiragino Sans", system-ui, sans-serif;
+  --font-japanese: "Hiragino Sans", "Noto Sans JP", -apple-system, system-ui, sans-serif;
+
+  /* Font Sizes (Tailwind 호환) */
+  --text-xs: 12px;
+  --text-sm: 14px;
+  --text-base: 16px;
+  --text-lg: 18px;
+  --text-xl: 22px;
+  --text-2xl: 26px;
+  --text-3xl: 32px;
+
+  /* ─── 8단계 타입 스케일 (Typography 시스템 / share/fianl/Typography.html) ───
+     · Display 56 / H1 36 / H2 24 / H3 18 / Body-L 16 / Body 14 / Caption 12 / Eyebrow 11
+     · line-height, weight, letter-spacing은 .type-* utility로도 노출 */
+  --text-display: 56px;
+  --text-h1: 36px;
+  --text-h2: 24px;
+  --text-h3: 18px;
+  --text-body-l: 16px;
+  --text-body: 14px;
+  --text-caption: 12px;
+  --text-eyebrow: 11px;
+
+  /* Spacing */
+  --spacing-xs: 4px;
+  --spacing-sm: 8px;
+  --spacing-md: 16px;
+  --spacing-lg: 24px;
+  --spacing-xl: 32px;
+  --spacing-2xl: 48px;
+}
+
+/* Immersion mode — body.immersion 활성화 시 모든 .romaji 요소 숨김
+ * 사용자가 한자/히라가나만 보고 읽기 연습할 수 있도록 (Duolingo/WaniKani 패턴)
+ * 각 페이지에서 로마자 표시 span에 className="romaji" 추가하면 일괄 토글됨
+ */
+body.immersion .romaji {
+  display: none !important;
+}
+
+/* 마스코트 reaction 배경 그라데이션 — 라이트 기본
+ * (MascotScene에서 var(--reaction-bg-X) 형태로 참조)
+ */
+:root {
+  --reaction-bg-sad: linear-gradient(180deg, #E4ECF4 0%, #C8D5E2 100%);
+  --reaction-bg-streak: linear-gradient(180deg, #FFE7C2 0%, #FF8A4D 100%);
+  --reaction-bg-sleep: linear-gradient(180deg, #2A2B4E 0%, #161629 100%);
+}
+
+/* Dark mode colors */
+.dark {
+  /* 마스코트 reaction 배경 — 다크 모드 변형
+   * sad / streak는 어두운 톤으로 톤다운, sleep은 더 깊은 남색
+   */
+  --reaction-bg-sad: linear-gradient(180deg, #1A2435 0%, #0F1828 100%);
+  --reaction-bg-streak: linear-gradient(180deg, #5C2A12 0%, #8A3F1F 100%);
+  --reaction-bg-sleep: linear-gradient(180deg, #1A1B36 0%, #0A0B19 100%);
+
+  --color-primary: #FF7377;
+  --color-primary-hover: #FF5A5F;
+  --color-primary-foreground: #FFFFFF;
+
+  --color-secondary: #00BFB2;
+  --color-secondary-hover: #00A699;
+  --color-secondary-foreground: #FFFFFF;
+
+  --color-background: #1A1A1A;
+  --color-foreground: #F7F7F7;
+  --color-card: #262626;
+  --color-card-foreground: #F7F7F7;
+  --color-popover: #262626;
+  --color-popover-foreground: #F7F7F7;
+
+  --color-text-primary: #F7F7F7;
+  --color-text-secondary: #B0B0B0;
+  --color-text-tertiary: #717171;
+
+  --color-muted: #333333;
+  --color-muted-foreground: #B0B0B0;
+
+  --color-accent: #333333;
+  --color-accent-foreground: #F7F7F7;
+
+  --color-border: #404040;
+  --color-border-light: #333333;
+  --color-input: #404040;
+  --color-ring: #F7F7F7;
+
+  --color-sakura-100: rgba(255, 90, 95, 0.15);
+  --color-sakura-200: rgba(255, 90, 95, 0.25);
+  --color-sakura-500: #FF7377;
+  --color-sakura-600: #FF5A5F;
+  --color-sakura-700: #E04E52;
+  --color-sakura-900: rgba(255, 90, 95, 0.2);
+
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
+  --shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 6px 16px rgba(0, 0, 0, 0.4);
+  --shadow-lg: 0 8px 28px rgba(0, 0, 0, 0.5);
+  --shadow-xl: 0 16px 40px rgba(0, 0, 0, 0.6);
+}
+
+@layer base {
+  *,
+  *::before,
+  *::after {
+    border-color: var(--color-border);
+    border-style: solid;
+    border-width: 0;
+  }
+
+  body {
+    @apply bg-background text-foreground antialiased;
+    font-family: var(--font-sans);
+    font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  /* iOS PWA standalone에서 status bar/Dynamic Island 영역 침범 방지.
+     viewport-fit=cover 환경에서만 env() 값이 들어옴 — 일반 모바일/데스크탑은 0.
+     BottomNav는 fixed 위치라 영향 없고, 페이지 콘텐츠만 상단 inset 만큼 밀려남. */
+  #root {
+    padding-top: env(safe-area-inset-top);
+    padding-left: env(safe-area-inset-left);
+    padding-right: env(safe-area-inset-right);
+    min-height: 100vh;
+    min-height: 100dvh;
+  }
+
+  /* Typography improvements */
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-semibold tracking-tight;
+  }
+
+  /* Smooth scrolling */
+  html {
+    scroll-behavior: smooth;
+  }
+}
+
+@layer components {
+  /* ─── 타입 스케일 utility (8단계, share/fianl/Typography.html 기준) ───
+     컴포넌트에 className으로 적용 시 사이즈/lh/weight/letter-spacing 일괄 */
+  .type-display {
+    /* Mobile fluid scaling — iPhone SE(375px) 대응 */
+    font-size: clamp(40px, 14vw, var(--text-display));
+    line-height: 1.07;
+    font-weight: 800;
+    letter-spacing: -2px;
+  }
+  .type-h1 {
+    font-size: var(--text-h1);
+    line-height: 42px;
+    font-weight: 800;
+    letter-spacing: -1.2px;
+  }
+  .type-h2 {
+    font-size: var(--text-h2);
+    line-height: 32px;
+    font-weight: 800;
+    letter-spacing: -0.6px;
+  }
+  .type-h3 {
+    font-size: var(--text-h3);
+    line-height: 26px;
+    font-weight: 700;
+    letter-spacing: -0.3px;
+  }
+  .type-body-l {
+    font-size: var(--text-body-l);
+    line-height: 26px;
+    font-weight: 400;
+    letter-spacing: 0;
+  }
+  .type-body {
+    font-size: var(--text-body);
+    line-height: 23px;
+    font-weight: 400;
+    letter-spacing: 0;
+  }
+  .type-caption {
+    font-size: var(--text-caption);
+    line-height: 18px;
+    font-weight: 500;
+    color: var(--color-text-secondary);
+  }
+  .type-eyebrow {
+    font-size: var(--text-eyebrow);
+    line-height: 1;
+    font-weight: 800;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    /* light: primary. dark: 살짝 부드럽게 (대비 보호) */
+    color: var(--color-eyebrow, var(--color-primary));
+  }
+  /* 다크 모드에서 type-eyebrow 색상은 별도 토큰으로 — WCAG AA 대비 보호 */
+  .dark {
+    --color-eyebrow: #FF8FB1;
+  }
+  /* 섹션 라벨 — eyebrow와 톤은 비슷하지만 muted 색상.
+     SettingsPage/ProfilePage/AppearancePage "일반/지원/계정" 같은 그룹 헤더용. */
+  .type-section {
+    font-size: var(--text-eyebrow);
+    line-height: 1.2;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--color-text-tertiary);
+  }
+  /* 에디토리얼 디스플레이 — H1·H2까지 italic serif 적용 (KO/JP 폴백).
+     H3 이하는 본문 가독성 보호 위해 sans 유지. */
+  [data-theme="editorial"] .type-display,
+  [data-theme="editorial"] .type-h1,
+  [data-theme="editorial"] .type-h2 {
+    font-family: var(--font-display);
+    font-style: italic;
+    font-weight: 400;
+    letter-spacing: -1.2px;
+  }
+
+  /* Airbnb-style button */
+  .btn-airbnb {
+    @apply inline-flex items-center justify-center font-semibold transition-all duration-200;
+    @apply rounded-lg px-6 py-3;
+    @apply bg-gradient-to-r from-[#E61E4D] via-[#E31C5F] to-[#D70466];
+    @apply text-white;
+    @apply hover:shadow-lg hover:scale-[1.02] active:scale-[0.98];
+  }
+
+  /* Airbnb-style card */
+  .card-airbnb {
+    @apply bg-card rounded-xl border border-border-light;
+    box-shadow: var(--shadow);
+    transition: box-shadow 0.2s ease, transform 0.2s ease;
+  }
+
+  .card-airbnb:hover {
+    box-shadow: var(--shadow-md);
+  }
+
+  /* Airbnb-style input */
+  .input-airbnb {
+    @apply w-full px-4 py-3 rounded-lg border border-border;
+    @apply bg-background text-foreground;
+    @apply placeholder:text-text-tertiary;
+    @apply focus:outline-none focus:ring-2 focus:ring-foreground focus:border-transparent;
+    @apply transition-all duration-200;
+  }
+
+  /* Divider */
+  .divider {
+    @apply h-px bg-border-light w-full;
+  }
+
+  /* Status pill */
+  .pill {
+    @apply inline-flex items-center px-3 py-1 rounded-full text-sm font-medium;
+  }
+
+  .pill-primary {
+    @apply bg-sakura-100 text-sakura-700;
+  }
+
+  .pill-success {
+    @apply bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400;
+  }
+
+  .pill-warning {
+    @apply bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400;
+  }
+}
+
+/* =============================================
+ * Per-theme overrides
+ * - d4-editorial: 큰 세리프 페이지 타이틀 + 끝점(.) 액센트
+ * - d5-mascot: 마스코트 hero 카드 강화 (홈에서만)
+ * ============================================= */
+
+/* d4-editorial: 헤더 내 페이지 제목을 큰 세리프 + 끝점으로 */
+[data-theme="d4-editorial"] [class*="sticky"][class*="top-0"] span.font-semibold.text-lg {
+  font-family: var(--font-display);
+  font-size: 36px;
+  font-weight: 700;
+  letter-spacing: -0.04em;
+  line-height: 1.1;
+}
+[data-theme="d4-editorial"] [class*="sticky"][class*="top-0"] span.font-semibold.text-lg::after {
+  content: '.';
+  color: var(--color-primary);
+}
+/* 헤더의 서브 텍스트(예: "앱 환경 설정")를 매거진 라벨 스타일로 */
+[data-theme="d4-editorial"] [class*="sticky"][class*="top-0"] span.font-semibold.text-lg + span,
+[data-theme="d4-editorial"] [class*="sticky"][class*="top-0"] span.font-semibold.text-lg ~ span {
+  font-family: var(--font-sans);
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--color-text-tertiary);
+}
+/* 홈의 큰 인사말 (h2) 도 세리프 강조 */
+[data-theme="d4-editorial"] h2.text-xl {
+  font-family: var(--font-display);
+  font-size: 32px;
+  font-weight: 700;
+  letter-spacing: -0.04em;
+  line-height: 1.15;
+}
+
+/* 1) 페이지 상단 핑크 그라데이션을 베이지 + hairline으로 교체 (매거진 무드)
+ *    sticky 헤더에 적용된 from-primary/10 그라데이션 자체를 무효화 */
+[data-theme="d4-editorial"] div.sticky.top-0.z-10 {
+  background-image: none !important;
+  background-color: var(--color-background) !important;
+  border-bottom: 1px solid var(--color-border-light);
+}
+
+/* 2) HomePage 최상단의 절대 위치 핑크 wash 도 제거 */
+[data-theme="d4-editorial"] .relative.overflow-hidden > .absolute.inset-0.bg-gradient-to-br {
+  background-image: none !important;
+}
+
+/* 3) 작은 아이콘 컨테이너 (w-8 h-8 bg-primary/10) 등 페이지 헤더 내 inline 핑크 박스를
+ *    중성 베이지로 (디스플레이 통일감 위해) */
+[data-theme="d4-editorial"] div.sticky.top-0.z-10 .bg-primary\/10 {
+  background-color: var(--color-muted) !important;
+}
+
+/* 4) 카드의 무거운 그림자를 매거진 hairline으로 (선택자: shadcn Card 컴포넌트) */
+[data-theme="d4-editorial"] [data-slot="card"],
+[data-theme="d4-editorial"] .rounded-xl.border.bg-card,
+[data-theme="d4-editorial"] .rounded-2xl.border.bg-card {
+  box-shadow: none !important;
+  border-color: var(--color-border-light);
+}
+
+/* 5) 본문 sticky 헤더의 텍스트 정렬: 매거진은 좌측 시작이 더 어울리지만
+ *    구조 유지를 위해 spacing만 살짝 가산. 아이콘은 더 작고 단정하게. */
+[data-theme="d4-editorial"] div.sticky.top-0.z-10 > * {
+  padding-top: 8px;
+  padding-bottom: 4px;
+}
+[data-theme="d4-editorial"] div.sticky.top-0.z-10 .w-8.h-8 {
+  width: 28px;
+  height: 28px;
+}
+
+/* 6) 단어 카드의 예문 박스(bg-muted)는 muted 토큰을 따라 자동 베이지 — 별도 처리 불필요
+ *    단, 좌측에 컬러 룰 라인을 추가해 매거진 인용 느낌 강화 */
+[data-theme="d4-editorial"] .bg-muted.rounded-2xl {
+  border-left: 2px solid var(--color-primary);
+  border-radius: 4px !important;
+  background-color: var(--color-card) !important;
+  padding-left: 14px !important;
+}
+
+/* 7) 한자(일본어) 표기는 매거진 톤에서 Noto Serif JP로 — 단어 카드와 헤더 큰 한자에만 */
+[data-theme="d4-editorial"] .text-6xl,
+[data-theme="d4-editorial"] .text-5xl {
+  font-family: var(--font-display);
+  font-weight: 700;
+}
+
+/* 8) 회화 카테고리 카드 등 bg-primary/10 사용 아이콘 박스를 페이퍼 톤으로 */
+[data-theme="d4-editorial"] .rounded-2xl .bg-primary\/10,
+[data-theme="d4-editorial"] [data-slot="card"] .bg-primary\/10 {
+  background-color: var(--color-muted) !important;
+}
+
+/* =============================================
+ * Animations (from share/ — 일관된 모션 디자인)
+ * Apple/iOS 스타일 easing + 학습앱 친화적 통통 튀는 동작
+ * ============================================= */
+
+/* 페이지 전환 */
+@keyframes screenIn {
+  from { opacity: 0; transform: translateX(24px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(14px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* 로고/스플래시 */
+@keyframes splashLogo {
+  0%   { opacity: 0; transform: scale(0.6) rotate(-6deg); }
+  60%  { opacity: 1; transform: scale(1.06) rotate(0); }
+  100% { opacity: 1; transform: scale(1) rotate(0); }
+}
+@keyframes floatBubble {
+  0%, 100% { transform: translate(0, 0) scale(1); opacity: .35; }
+  50%      { transform: translate(20px, -30px) scale(1.15); opacity: .55; }
+}
+
+/* 마스코트 */
+@keyframes mascotBob {
+  0%, 100% { transform: translateY(0) rotate(-1.5deg); }
+  50%      { transform: translateY(-8px) rotate(1.5deg); }
+}
+@keyframes haloPulse {
+  0%, 100% { transform: scale(1); opacity: .6; }
+  50%      { transform: scale(1.12); opacity: .9; }
+}
+
+/* 학습/퀴즈 */
+@keyframes quizWord {
+  0%   { opacity: 0; transform: translateY(20px) scale(0.92); }
+  100% { opacity: 1; transform: translateY(0) scale(1); }
+}
+@keyframes speech {
+  from { opacity: 0; transform: translate(10px, -4px) scale(0.6); }
+  to   { opacity: 1; transform: translate(0,0) scale(1); }
+}
+
+/* 보상/축하 */
+@keyframes badgePop {
+  0%   { transform: scale(0.4) rotate(-8deg); opacity: 0; }
+  70%  { transform: scale(1.1) rotate(2deg); opacity: 1; }
+  100% { transform: scale(1) rotate(0); opacity: 1; }
+}
+@keyframes spinSlow {
+  to { transform: rotate(360deg); }
+}
+@keyframes confetti {
+  0%   { transform: translateY(-40px) rotate(0); opacity: 0; }
+  20%  { opacity: 1; }
+  100% { transform: translateY(800px) rotate(720deg); opacity: 0; }
+}
+
+/* 에러/시스템 */
+@keyframes errBounce {
+  0%, 100% { transform: translate(0,0); }
+  50%      { transform: translate(0,-6px); }
+}
+@keyframes gearSpin { to { transform: rotate(360deg); } }
+@keyframes updateArrow {
+  0%, 100% { transform: translateY(0); opacity: 1; }
+  50%      { transform: translateY(6px); opacity: 0.6; }
+}
+
+/* 통계/그래프 */
+@keyframes flameFlicker {
+  0%, 100% { transform: scale(1) rotate(-2deg); }
+  50%      { transform: scale(1.06) rotate(2deg); }
+}
+@keyframes barGrow {
+  from { transform: scaleY(0); }
+  to   { transform: scaleY(1); }
+}
+
+@layer utilities {
+  /* 애니메이션 utility 클래스 */
+  .anim-screen-in   { animation: screenIn 0.5s ease-out; }
+  .anim-slide-up    { animation: slideUp 0.5s cubic-bezier(.2,.7,.2,1.05) both; }
+  .anim-fade-up     { animation: fadeUp 0.6s 0.1s both ease-out; }
+  .anim-splash      { animation: splashLogo 1.2s cubic-bezier(.2,.7,.2,1.05); }
+  .anim-float       { animation: floatBubble 6s ease-in-out infinite; }
+  .anim-bob         { animation: mascotBob 2.6s ease-in-out infinite; }
+  .anim-halo        { animation: haloPulse 3.4s ease-in-out infinite; }
+  .anim-quiz-word   { animation: quizWord 0.4s ease-out; }
+  .anim-speech      { animation: speech 0.4s 0.3s both; }
+  .anim-badge-pop   { animation: badgePop 0.7s cubic-bezier(.2,1.5,.3,1); }
+  .anim-spin-slow   { animation: spinSlow 14s linear infinite; }
+  .anim-confetti    { animation: confetti 2.4s ease-in forwards; }
+  .anim-err-bounce  { animation: errBounce 1.4s ease-in-out infinite; }
+  .anim-gear        { animation: gearSpin 6s linear infinite; }
+  .anim-update      { animation: updateArrow 1.8s ease-in-out infinite; }
+  .anim-flame       { animation: flameFlicker 1.8s ease-in-out infinite; }
+  .anim-bar-grow    { animation: barGrow 1.4s ease-out both; transform-origin: bottom; }
+
+  /* prefers-reduced-motion 사용자는 모든 애니메이션 약화 */
+  @media (prefers-reduced-motion: reduce) {
+    .anim-bob, .anim-halo, .anim-float, .anim-spin-slow,
+    .anim-err-bounce, .anim-gear, .anim-update, .anim-flame {
+      animation-duration: 0.001s !important;
+      animation-iteration-count: 1 !important;
+    }
+  }
+
+  /* Text utilities */
+  .text-gradient {
+    @apply bg-gradient-to-r from-[#E61E4D] via-[#E31C5F] to-[#D70466];
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  /* Blur backdrop */
+  .backdrop-blur-airbnb {
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+  }
+
+  /* Hide scrollbar but keep functionality */
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* Safe area for mobile */
+  .safe-bottom {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+
+  /* 페이지 콘텐츠가 BottomNav(72px) + Home Indicator 영역을 안 가리도록.
+     기존 pb-[88px]는 노치 기기에서 BottomNav가 콘텐츠를 침범하는 문제가 있어
+     env(safe-area-inset-bottom) 만큼 더 띄움. */
+  .pb-nav {
+    padding-bottom: calc(88px + env(safe-area-inset-bottom));
+  }
+
+  /* 상단 노치/Dynamic Island 회피 — sticky 헤더 페이지에서 사용 */
+  .safe-top {
+    padding-top: env(safe-area-inset-top);
+  }
+}
+
+/* ─── 마스코트 본체 reaction keyframes ────────────────────
+ * MascotScene이 img 태그 animation으로 사용.
+ */
+@keyframes happy {
+  0%, 100% { transform: translateY(0) rotate(-3deg) scale(1); }
+  25%      { transform: translateY(-12px) rotate(3deg) scale(1.04); }
+  50%      { transform: translateY(0)    rotate(-3deg) scale(1); }
+  75%      { transform: translateY(-8px) rotate(3deg) scale(1.04); }
+}
+@keyframes celebrate {
+  0%, 100% { transform: translateY(0) rotate(0) scale(1); }
+  25%      { transform: translateY(-22px) rotate(-8deg) scale(1.06); }
+  50%      { transform: translateY(-30px) rotate(0) scale(1.08); }
+  75%      { transform: translateY(-22px) rotate(8deg) scale(1.06); }
+}
+@keyframes sad {
+  0%, 100% { transform: translateY(2px) rotate(0) scale(0.97); }
+  50%      { transform: translateY(-2px) rotate(0) scale(0.97); }
+}
+@keyframes cheer {
+  0%, 100% { transform: translate(-2px, 0) rotate(-2deg) scale(1.02); }
+  25%      { transform: translate( 2px,-3px) rotate(2deg)  scale(1.04); }
+  50%      { transform: translate(-2px, 0) rotate(-2deg) scale(1.02); }
+  75%      { transform: translate( 2px,-3px) rotate(2deg)  scale(1.04); }
+}
+@keyframes sleep {
+  0%, 100% { transform: translateY(0) rotate(-3deg) scale(1); }
+  50%      { transform: translateY(2px) rotate(3deg) scale(1); }
+}
+@keyframes think {
+  0%, 100% { transform: rotate(-6deg) translateY(0); }
+  50%      { transform: rotate(-6deg) translateY(-4px); }
+}
+@keyframes streak {
+  0%, 100% { transform: translate(0, -2px) rotate(-1deg) scale(1.02); }
+  50%      { transform: translate(0,  2px) rotate( 1deg) scale(1.02); }
+}
+@keyframes wave {
+  0%, 100% { transform: rotate(0); }
+  25%      { transform: rotate(-4deg); }
+  75%      { transform: rotate(4deg); }
+}
+@keyframes shock {
+  0%   { transform: scale(1); }
+  10%  { transform: scale(1.18) translateY(-6px); }
+  20%  { transform: scale(1) translateY(0); }
+  100% { transform: scale(1); }
+}
+
+/* ─── 마스코트 reaction sprite keyframes ───────────────────
+ * MascotScene이 사용. share/add-ani 정의에서 가져옴.
+ */
+@keyframes mascot-sparkle {
+  0%, 100% { transform: scale(0.6) rotate(0); opacity: 0; }
+  50%      { transform: scale(1.1) rotate(40deg); opacity: 1; }
+}
+@keyframes mascot-drift-up {
+  0%   { transform: translateY(0) scale(0.8); opacity: 0; }
+  20%  { opacity: 1; }
+  100% { transform: translateY(-80px) scale(1.1); opacity: 0; }
+}
+@keyframes mascot-fall {
+  0%   { transform: translateY(-40px) rotate(0); opacity: 0; }
+  10%  { opacity: 1; }
+  100% { transform: translateY(220px) rotate(540deg); opacity: 0; }
+}
+@keyframes mascot-tear {
+  0%   { transform: translateY(0) scale(0.6); opacity: 0; }
+  20%  { opacity: 1; transform: translateY(8px) scale(1); }
+  100% { transform: translateY(60px) scale(0.8); opacity: 0; }
+}
+@keyframes mascot-pulse-ring {
+  0%   { transform: scale(0.4); opacity: 1; }
+  100% { transform: scale(1.6); opacity: 0; }
+}
+@keyframes mascot-z-float {
+  0%   { transform: translate(0,0) rotate(0); opacity: 0; }
+  20%  { opacity: 1; }
+  100% { transform: translate(20px, -50px) rotate(20deg); opacity: 0; }
+}
+@keyframes mascot-flame {
+  0%, 100% { transform: translateY(0) scaleY(1) scaleX(1); }
+  50%      { transform: translateY(-4px) scaleY(1.15) scaleX(0.9); }
+}
+
+/* ────────── Level badges — share/Level Badges.html에서 포팅 ────────── */
+/* 뱃지가 위아래로 떠다님 (3초 주기) */
+@keyframes badge-idle {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-4px); }
+}
+/* lv5+ 외곽 dashed 링이 천천히 회전 (18초) */
+@keyframes badge-spin {
+  to { transform: rotate(360deg); }
+}
+/* 진행 바 채우기 */
+@keyframes badge-fill-bar {
+  from { transform: scaleX(0); }
+  to   { transform: scaleX(var(--pct, 1)); }
+}
+/* 현재 레벨 pill 펄스 */
+@keyframes badge-pulse-pill {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(255,51,102,0.55); }
+  50%      { box-shadow: 0 0 0 8px rgba(255,51,102,0); }
+}
+
+/* ────────── Loading spinners — share/Loading Spinners.html에서 포팅 ────────── */
+/* 1. 클래식 링 — 단순 회전 */
+@keyframes spinner-spin { to { transform: rotate(360deg); } }
+
+/* 2. 도트 바운스 — 3개 점이 순차로 튐 */
+@keyframes spinner-dot-bounce {
+  0%, 80%, 100% { transform: scale(0.6); opacity: 0.4; }
+  40%           { transform: scale(1.1); opacity: 1; }
+}
+
+/* 3. 채팅 타이핑 점 */
+@keyframes spinner-typing-dot {
+  0%, 100% { transform: translateY(0); opacity: 0.4; }
+  50%      { transform: translateY(-6px); opacity: 1; }
+}
+
+/* 4. 스켈레톤 시머 */
+@keyframes spinner-shimmer {
+  0%   { background-position: -200px 0; }
+  100% { background-position: 200px 0; }
+}
+
+/* 5. 마스코트 바운스 + 그림자 (풀스크린/대형 로딩) */
+@keyframes spinner-mascot-bob {
+  0%, 100% { transform: translateY(0) rotate(-3deg) scale(1); }
+  50%      { transform: translateY(-10px) rotate(3deg) scale(1.04); }
+}
+@keyframes spinner-shadow-pulse {
+  0%, 100% { transform: scaleX(1); opacity: 0.16; }
+  50%      { transform: scaleX(0.7); opacity: 0.1; }
+}
+
+/* 6. 풀스크린 진행바 indeterminate */
+@keyframes spinner-bar-fill {
+  0%   { transform: scaleX(0); }
+  50%  { transform: scaleX(0.7); }
+  100% { transform: scaleX(1); }
+}
+
+/* ────────── prefers-reduced-motion 대응 ──────────
+   시스템 "동작 줄이기" 켠 사용자(멀미·발작 민감군)에게 모든 무한 루프 차단. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* 모든 사용자에게 1분 후 마스코트·뱃지·sprite 등 루프 애니메이션 자동 정지.
+   처음 1분간은 활기있게 보여주고 그 후 정적으로 — 멀미 방지 + 첫 인상 균형.
+   App.tsx에서 60초 후 body에 .motion-paused 클래스 추가. */
+body.motion-paused *,
+body.motion-paused *::before,
+body.motion-paused *::after {
+  animation-play-state: paused !important;
+}
+

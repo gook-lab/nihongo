@@ -1,0 +1,367 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>UI Tone Board — Nihongo App</title>
+<style>
+  html, body { margin: 0; padding: 0; background: #F1ECEC; color: #1A1A1A;
+    font-family: -apple-system, "SF Pro Display", "Pretendard", "Noto Sans KR", system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased; }
+  * { box-sizing: border-box; }
+
+  header {
+    padding: 64px 40px 28px; max-width: 1280px; margin: 0 auto;
+  }
+  .eyebrow { font-size: 11px; letter-spacing: 3px; color: #E84992; font-weight: 800; }
+  h1 { margin: 8px 0 8px; font-size: 44px; font-weight: 800; letter-spacing: -1.4px; line-height: 1.1; }
+  .lede { color: #6B6B6B; font-size: 15px; line-height: 1.6; max-width: 640px; }
+
+  .meta-strip {
+    max-width: 1280px; margin: 20px auto 0; padding: 0 40px;
+    display: flex; gap: 12px; flex-wrap: wrap;
+  }
+  .chip {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 6px 12px; border-radius: 999px; background: #fff;
+    border: 1px solid rgba(0,0,0,0.08); font-size: 11px; font-weight: 700; color: #1A1A1A;
+  }
+  .chip .dot { width: 10px; height: 10px; border-radius: 4px; }
+
+  /* Theme palette cards */
+  .palette {
+    max-width: 1280px; margin: 0 auto; padding: 0 40px;
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px;
+  }
+  .pcard {
+    background: #fff; border-radius: 24px; padding: 22px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+    display: flex; flex-direction: column; gap: 12px;
+  }
+  .pcard .name { font-size: 22px; font-weight: 800; letter-spacing: -0.5px; }
+  .pcard .name em { font-style: normal; font-size: 11px; color: #6B6B6B; margin-left: 6px; letter-spacing: 1px; font-weight: 600; }
+  .pcard .desc { font-size: 12px; color: #6B6B6B; }
+  .pcard .swatches { display: flex; gap: 6px; }
+  .pcard .sw { flex: 1; height: 56px; border-radius: 8px; position: relative; overflow: hidden; }
+  .pcard .sw .lbl { position: absolute; bottom: 4px; left: 6px; font-size: 8px; font-weight: 800; color: #fff; letter-spacing: 1px; mix-blend-mode: difference; opacity: 0.85; }
+  .pcard .ty { display: flex; gap: 8px; align-items: baseline; }
+  .pcard .ty .display { font-size: 26px; font-weight: 800; letter-spacing: -0.6px; }
+  .pcard .ty .body { font-size: 12px; color: #6B6B6B; }
+  .pcard .specs { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; font-size: 11px; color: #6B6B6B; }
+  .pcard .specs span { background: #F4F4F4; padding: 4px 8px; border-radius: 6px; font-family: ui-monospace, SF Mono, monospace; font-size: 10px; }
+
+  footer { padding: 60px 0 40px; text-align: center; font-size: 12px; color: #A3A3A3; }
+
+  @keyframes bob {
+    0%, 100% { transform: translateY(0) rotate(-1deg); }
+    50%      { transform: translateY(-4px) rotate(1deg); }
+  }
+
+  .flow-band {
+    background: linear-gradient(180deg, #F8F4F4 0%, #F1ECEC 100%);
+    padding: 36px 0 12px;
+    margin-top: 12px;
+  }
+  .flow-band-title {
+    max-width: 1280px; margin: 0 auto; padding: 0 40px;
+    display: flex; align-items: baseline; gap: 12px; margin-bottom: 14px;
+  }
+  .flow-band-title h3 { margin: 0; font-size: 22px; font-weight: 800; letter-spacing: -0.4px; }
+  .flow-band-title span { font-size: 12px; color: #6B6B6B; }
+</style>
+
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+</head>
+<body>
+
+<header>
+  <div class="eyebrow">NIHONGO APP · UI TONE BOARD</div>
+  <h1>3개 테마 · 6개 홈<br/>전 페이지 톤 정렬</h1>
+  <p class="lede">기본 · 에디토리얼 · 잉크 세 가지 테마로 단순화하고,
+    각 페이지를 같은 톤으로 정렬했어요. 홈 레이아웃은 6가지를 유지하면서
+    오늘의 학습 → 결과 → 설정 등 주요 플로우를 한눈에 비교할 수 있게 정리했습니다.</p>
+</header>
+
+<div class="meta-strip">
+  <div class="chip"><span class="dot" style="background:#FF5A5F"></span>기본</div>
+  <div class="chip"><span class="dot" style="background:#E83E7A"></span>에디토리얼</div>
+  <div class="chip"><span class="dot" style="background:#0E0E10"></span>잉크</div>
+  <div class="chip">3 themes</div>
+  <div class="chip">6 home layouts</div>
+  <div class="chip">12+ screens</div>
+</div>
+
+<!-- Section 1: Theme palette -->
+<div id="palette-mount" style="margin-top: 36px;"></div>
+
+<!-- Section 2-6: Flow boards (mounted via React) -->
+<div id="flows-mount"></div>
+
+<footer>
+  Nihongo App · UI Tone Board · 작업하신 코드베이스 기반으로 정리됨
+</footer>
+
+<script src="tone-board/theme.js"></script>
+<script type="text/babel" src="tone-board/phone.jsx"></script>
+<script type="text/babel" src="tone-board/screens-onboarding.jsx"></script>
+<script type="text/babel" src="tone-board/screens-learn.jsx"></script>
+<script type="text/babel" src="tone-board/screens-settings.jsx"></script>
+<script type="text/babel" src="tone-board/screens-more.jsx"></script>
+<script type="text/babel" src="tone-board/screens-rest.jsx"></script>
+<script type="text/babel" src="tone-board/screens-new.jsx"></script>
+<script type="text/babel" src="tone-board/home-variants.jsx"></script>
+
+<script type="text/babel">
+  // ─── Theme palette section ───
+  function PaletteCard({ t }) {
+    return (
+      <div className="pcard">
+        <div>
+          <div className="name">{t.name} <em>{t.nameJa}</em></div>
+          <div className="desc">{t.desc}</div>
+        </div>
+        <div className="swatches">
+          <div className="sw" style={{ background: t.tokens['--bg'], border: '1px solid #EEE' }}>
+            <div className="lbl">BG</div>
+          </div>
+          <div className="sw" style={{ background: t.tokens['--surface2'], border: '1px solid #EEE' }}>
+            <div className="lbl">SUR</div>
+          </div>
+          <div className="sw" style={{ background: t.tokens['--primary'] }}>
+            <div className="lbl" style={{ color: t.tokens['--primary-fg'] }}>PRI</div>
+          </div>
+          <div className="sw" style={{ background: t.tokens['--ink'] }}>
+            <div className="lbl" style={{ color: '#fff' }}>INK</div>
+          </div>
+        </div>
+        <div className="ty" style={{ fontFamily: t.tokens['--font-display'] }}>
+          <span className="display">Aa 가</span>
+          <span className="body" style={{ fontFamily: t.tokens['--font'] }}>오늘도 함께 일본어</span>
+        </div>
+        <div className="specs">
+          <span>radius {t.tokens['--radius']}</span>
+          <span>{t.tokens['--font-display'].includes('Serif') ? 'Serif Display' : 'Sans'}</span>
+        </div>
+      </div>
+    );
+  }
+  function PaletteSection() {
+    return (
+      <div className="palette">
+        {Object.values(window.THEMES).map(t => <PaletteCard key={t.id} t={t}/>)}
+      </div>
+    );
+  }
+  ReactDOM.createRoot(document.getElementById('palette-mount')).render(<PaletteSection/>);
+
+  // ─── Flows section ───
+  function FlowBand({ title, sub, themes = ['default'], children }) {
+    return (
+      <div className="flow-band">
+        <div className="flow-band-title">
+          <h3>{title}</h3>
+          <span>{sub}</span>
+        </div>
+        <PhoneRow>{children}</PhoneRow>
+      </div>
+    );
+  }
+
+  function ThemeBoard({ themeId }) {
+    return (
+      <div>
+        <FlowBand title={'1 · 인증 & 온보딩 (' + window.THEMES[themeId].name + ')'} sub="Splash → Login → Goal → Ready">
+          <Phone theme={themeId} label="Splash"><SplashScreen/></Phone>
+          <FlowArrow/>
+          <Phone theme={themeId} label="Login" sublabel="/login"><LoginScreen/></Phone>
+          <FlowArrow/>
+          <Phone theme={themeId} label="Goal" sublabel="/onboarding/goal"><GoalScreen/></Phone>
+          <FlowArrow/>
+          <Phone theme={themeId} label="Ready" sublabel="/onboarding/ready"><ReadyScreen/></Phone>
+        </FlowBand>
+
+        <FlowBand title={'2 · 학습 루프 (' + window.THEMES[themeId].name + ')'} sub="Learn → 오답 모달 → Result">
+          <Phone theme={themeId} label="Learning" sublabel="/learn"><LearningScreen/></Phone>
+          <FlowArrow/>
+          <Phone theme={themeId} label="Wrong Modal" sublabel="overlay"><WrongModalScreen/></Phone>
+          <FlowArrow/>
+          <Phone theme={themeId} label="Result" sublabel="/result"><ResultScreen/></Phone>
+        </FlowBand>
+
+        <FlowBand title={'3 · 설정 & 배지 (' + window.THEMES[themeId].name + ')'} sub="Settings → Appearance → Badge">
+          <Phone theme={themeId} label="Settings" sublabel="/settings"><SettingsScreen/></Phone>
+          <FlowArrow/>
+          <Phone theme={themeId} label="Appearance" sublabel="/settings/appearance"><AppearanceScreen/></Phone>
+          <FlowArrow/>
+          <Phone theme={themeId} label="Badges" sublabel="/settings/badges"><BadgeCollectionScreen/></Phone>
+        </FlowBand>
+
+        <FlowBand title={'4 · 탐색 탭 (' + window.THEMES[themeId].name + ')'} sub="Dictionary → Wrong Words → Statistics">
+          <Phone theme={themeId} label="Dictionary" sublabel="/dictionary"><DictionaryScreen/></Phone>
+          <FlowArrow/>
+          <Phone theme={themeId} label="Wrong Words" sublabel="/wrong-words"><WrongWordsScreen/></Phone>
+          <FlowArrow/>
+          <Phone theme={themeId} label="Statistics" sublabel="/stats"><StatsScreen/></Phone>
+        </FlowBand>
+
+        <FlowBand title={'5 · 회화 시리즈 (' + window.THEMES[themeId].name + ')'} sub="List → Detail → Quiz → AI Chat → Memo">
+          <Phone theme={themeId} label="회화 목록" sublabel="/conversation"><ConversationListScreen/></Phone>
+          <FlowArrow/>
+          <Phone theme={themeId} label="표현 상세" sublabel="/:category"><ConversationDetailScreen/></Phone>
+          <FlowArrow/>
+          <Phone theme={themeId} label="퀴즈" sublabel="/:cat/quiz"><ConversationQuizScreen/></Phone>
+          <FlowArrow/>
+          <Phone theme={themeId} label="AI 튜터" sublabel="/conversation/ai"><AIConversationScreen/></Phone>
+          <FlowArrow/>
+          <Phone theme={themeId} label="메모" sublabel="/conversation/memo"><ConversationMemoScreen/></Phone>
+        </FlowBand>
+
+        <FlowBand title={'6 · 한자 & 카나 (' + window.THEMES[themeId].name + ')'} sub="Kana Chart → Kana Game → Kanji">
+          <Phone theme={themeId} label="카나 표" sublabel="/kana"><KanaChartScreen/></Phone>
+          <FlowArrow/>
+          <Phone theme={themeId} label="카나 게임" sublabel="/kana-game"><KanaGameScreen/></Phone>
+          <FlowArrow/>
+          <Phone theme={themeId} label="한자 카드" sublabel="/kanji"><KanjiScreen/></Phone>
+        </FlowBand>
+
+        <FlowBand title={'7 · 읽기 & 쓰기 (' + window.THEMES[themeId].name + ')'} sub="Reading → Detail → AI Writing">
+          <Phone theme={themeId} label="짧은 글" sublabel="/reading"><ReadingScreen/></Phone>
+          <FlowArrow/>
+          <Phone theme={themeId} label="읽기 상세" sublabel="/reading/:id"><ReadingDetailScreen/></Phone>
+          <FlowArrow/>
+          <Phone theme={themeId} label="AI 작문" sublabel="/writing"><WritingScreen/></Phone>
+        </FlowBand>
+
+        <FlowBand title={'8 · 노래 & 모의고사 (' + window.THEMES[themeId].name + ')'} sub="Songs → JLPT Mock">
+          <Phone theme={themeId} label="동요" sublabel="/songs"><SongsScreen/></Phone>
+          <FlowArrow/>
+          <Phone theme={themeId} label="모의고사" sublabel="/mock"><MockTestScreen/></Phone>
+        </FlowBand>
+
+        <FlowBand title={'9 · 프로필 (' + window.THEMES[themeId].name + ')'} sub="Profile → Notifications">
+          <Phone theme={themeId} label="마이페이지" sublabel="/profile"><ProfileScreen/></Phone>
+          <FlowArrow/>
+          <Phone theme={themeId} label="알림 설정" sublabel="/settings/notifications"><NotificationScreen/></Phone>
+        </FlowBand>
+
+        <FlowBand title={'10 · 콘텐츠 확장 (' + window.THEMES[themeId].name + ')'} sub="AI Reading → Song Detail → Mock 진행 → Dialogue → Dialogue 진행">
+          <Phone theme={themeId} label="AI 읽기" sublabel="/reading/ai"><AIReadingScreen/></Phone>
+          <FlowArrow/>
+          <Phone theme={themeId} label="동요 상세" sublabel="/songs/:id"><SongDetailScreen/></Phone>
+          <FlowArrow/>
+          <Phone theme={themeId} label="모의 진행" sublabel="/mock/:level"><MockTestInProgressScreen/></Phone>
+          <FlowArrow/>
+          <Phone theme={themeId} label="대화 시뮬레이션" sublabel="/dialogue"><DialogueScreen/></Phone>
+          <FlowArrow/>
+          <Phone theme={themeId} label="대화 진행" sublabel="/dialogue/:id"><DialogueDetailScreen/></Phone>
+        </FlowBand>
+
+        <FlowBand title={'11 · 에러 & 시스템 (' + window.THEMES[themeId].name + ')'} sub="Network / Server / Permission / Maintenance / Update / 404">
+          <Phone theme={themeId} label="네트워크" sublabel="/error/network"><NetworkErrorScreen/></Phone>
+          <FlowArrow/>
+          <Phone theme={themeId} label="서버 500" sublabel="/error/server"><ServerErrorScreen/></Phone>
+          <FlowArrow/>
+          <Phone theme={themeId} label="권한" sublabel="/error/permission"><PermissionErrorScreen/></Phone>
+          <FlowArrow/>
+          <Phone theme={themeId} label="점검중" sublabel="/error/maintenance"><MaintenanceScreen/></Phone>
+          <FlowArrow/>
+          <Phone theme={themeId} label="업데이트" sublabel="/error/update"><UpdateScreen/></Phone>
+          <FlowArrow/>
+          <Phone theme={themeId} label="404" sublabel="*"><NotFoundScreen/></Phone>
+        </FlowBand>
+
+        <FlowBand title={'12 · 계정 & 법적 (' + window.THEMES[themeId].name + ')'} sub="Account Delete → Terms → Privacy">
+          <Phone theme={themeId} label="계정 탈퇴" sublabel="/account/delete"><AccountDeleteScreen/></Phone>
+          <FlowArrow/>
+          <Phone theme={themeId} label="이용약관" sublabel="/terms"><TermsScreen/></Phone>
+          <FlowArrow/>
+          <Phone theme={themeId} label="개인정보" sublabel="/privacy"><PrivacyScreen/></Phone>
+        </FlowBand>
+
+        <FlowBand title={'13 · 학습 준비 & 캔버스 (' + window.THEMES[themeId].name + ')'} sub="홈(위젯) → Prep → Learning(canvas) → 결과">
+          <Phone theme={themeId} label="홈 + 위젯" sublabel="quick pick + today words"><HomeWithWidgetsScreen/></Phone>
+          <FlowArrow/>
+          <Phone theme={themeId} label="학습 준비" sublabel="Step 0 — 유형 선택"><LearningPrepScreen/></Phone>
+          <FlowArrow/>
+          <Phone theme={themeId} label="작문 캔버스" sublabel="reverse + canvas"><LearningCanvasScreen/></Phone>
+          <FlowArrow/>
+          <Phone theme={themeId} label="첫 세션 축하" sublabel="FirstSessionModal"><FirstSessionModalScreen/></Phone>
+        </FlowBand>
+
+        <FlowBand title={'14 · 문법 & 손글씨 (' + window.THEMES[themeId].name + ')'} sub="Grammar → Kanji Practice → 결과 → Kana Practice">
+          <Phone theme={themeId} label="문법" sublabel="/grammar"><GrammarScreen/></Phone>
+          <FlowArrow/>
+          <Phone theme={themeId} label="한자 손글씨" sublabel="/kanji/practice"><KanjiPracticeScreen/></Phone>
+          <FlowArrow/>
+          <Phone theme={themeId} label="채점 결과" sublabel="kanji score"><KanjiPracticeResultScreen/></Phone>
+          <FlowArrow/>
+          <Phone theme={themeId} label="카나 손글씨" sublabel="/kana/practice"><KanaPracticeScreen/></Phone>
+        </FlowBand>
+
+        <FlowBand title={'15 · 축하 & 보상 모달 (' + window.THEMES[themeId].name + ')'} sub="Intro Tour → Level Up → Streak Reward → First Session">
+          <Phone theme={themeId} label="첫 진입 투어" sublabel="MascotIntroTour 2/3"><MascotIntroTourScreen/></Phone>
+          <FlowArrow/>
+          <Phone theme={themeId} label="레벨업" sublabel="LevelUpModal"><LevelUpModalScreen/></Phone>
+          <FlowArrow/>
+          <Phone theme={themeId} label="연속 보상" sublabel="StreakRewardModal"><StreakRewardModalScreen/></Phone>
+          <FlowArrow/>
+          <Phone theme={themeId} label="첫 세션 축하" sublabel="FirstSessionModal"><FirstSessionModalScreen/></Phone>
+        </FlowBand>
+
+        <FlowBand title={'16 · 검색 & 사전 카드 (' + window.THEMES[themeId].name + ')'} sub="Quick Search (⌘K) → Word Flip Card">
+          <Phone theme={themeId} label="빠른 검색" sublabel="⌘K — global"><QuickDictSearchScreen/></Phone>
+          <FlowArrow/>
+          <Phone theme={themeId} label="플립 카드" sublabel="WordFlipCard"><DictionaryFlipScreen/></Phone>
+        </FlowBand>
+
+        <FlowBand title={'17 · 플래시카드 & 트렌드 (' + window.THEMES[themeId].name + ')'} sub="Flashcard 모드 → 통계 트렌드 차트">
+          <Phone theme={themeId} label="플래시카드" sublabel="swipe + flip"><FlashcardScreen/></Phone>
+          <FlowArrow/>
+          <Phone theme={themeId} label="7일 트렌드" sublabel="LearningTrendChart"><LearningTrendChartScreen/></Phone>
+        </FlowBand>
+      </div>
+    );
+  }
+
+  function HomeVariantsBoard() {
+    return (
+      <div className="flow-band" style={{ background: 'linear-gradient(180deg, #FBF5F5 0%, #F1ECEC 100%)' }}>
+        <div className="flow-band-title">
+          <h3>홈 레이아웃 6종 (테마: 기본)</h3>
+          <span>같은 데이터, 다른 정보 위계 · 사용자가 선택</span>
+        </div>
+        <PhoneRow>
+          <Phone theme="default" label="기본" sublabel="default"><HomeDefault/></Phone>
+          <Phone theme="editorial" label="에디토리얼" sublabel="editorial"><HomeEditorial/></Phone>
+          <Phone theme="default" label="모노" sublabel="mono"><HomeMono/></Phone>
+          <Phone theme="default" label="iOS" sublabel="ios"><HomeIos/></Phone>
+          <Phone theme="default" label="마스코트" sublabel="mascot"><HomeMascot/></Phone>
+          <Phone theme="ink" label="잉크" sublabel="ink"><HomeInk/></Phone>
+        </PhoneRow>
+      </div>
+    );
+  }
+
+  function FlowsSection() {
+    return (
+      <div style={{ marginTop: 36 }}>
+        <SectionTitle eyebrow="THEME · 기본" title="기본 테마 — 페이지 플로우" sub="Airbnb Coral 베이스. 가장 친근하고 활동적인 톤. 신규 사용자 + 캐주얼 사용자에게 추천."/>
+        <ThemeBoard themeId="default"/>
+
+        <SectionTitle eyebrow="THEME · 에디토리얼" title="에디토리얼 테마 — 페이지 플로우" sub="매거진 같은 큰 세리프 + 넓은 여백. 깊이 있는 학습 분위기를 원하는 사용자."/>
+        <ThemeBoard themeId="editorial"/>
+
+        <SectionTitle eyebrow="THEME · 잉크" title="잉크 테마 — 페이지 플로우" sub="미니멀 모노톤 + 검정 CTA. 절제된 인상, 집중도가 높은 환경."/>
+        <ThemeBoard themeId="ink"/>
+
+        <SectionTitle eyebrow="HOME LAYOUTS" title="홈 레이아웃 6종" sub="테마와 별개로 사용자가 홈 정보 위계를 선택할 수 있어요. 기본 / 에디토리얼 / 모노 / iOS / 마스코트 / 잉크."/>
+        <HomeVariantsBoard/>
+      </div>
+    );
+  }
+  ReactDOM.createRoot(document.getElementById('flows-mount')).render(<FlowsSection/>);
+</script>
+</body>
+</html>
