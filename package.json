@@ -10,7 +10,9 @@
     "preview": "vite preview",
     "test": "vitest run",
     "test:watch": "vitest",
-    "test:ui": "vitest --ui"
+    "test:ui": "vitest --ui",
+    "lint:gate": "node scripts/lint-gate.js",
+    "lint:gate:update": "node scripts/lint-gate.js --update"
   },
   "dependencies": {
     "@google/genai": "^1.39.0",
