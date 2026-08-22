@@ -141,8 +141,7 @@ docs/                    PROJECT_STATUS.md 등
 | [TODOS.md](TODOS.md) | 남은 작업 |
 | [CLAUDE.md](CLAUDE.md) | 작업 규칙 (+ 각 디렉토리에 모듈별 `CLAUDE.md`) |
 | [docs/mascot-costume-prompts.md](docs/mascot-costume-prompts.md) | 마스코트 의상 생성 프롬프트 |
-| `plans/` | 진행 중/미착수 계획 — [Firebase 백업](plans/firebase-backup.md) (색인: [plans/README.md](plans/README.md)) |
-| `plans/completed/` | 구현이 끝난 계획 12건 — [마스코트](plans/completed/feat-mascot-character.md) · [여행 홈](plans/completed/feat-travel-home.md) · [여행 신뢰성](plans/completed/feat-travel-reliability.md) 등 |
+| `plans/` | 기능별 작업 계획 — 진행 중 1건 + `completed/` 12건. **로컬 전용**(`.gitignore`)이라 이 레포에는 없다 |
 
 ## 프로젝트 룰
 
