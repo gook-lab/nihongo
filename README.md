@@ -1,6 +1,6 @@
 # 니혼고 (Nihongo App)
 
-**한국어** · [English](README.en.md)
+**한국어** | [English](README.en.md)
 
 > **About (EN)** — A Japanese-learning PWA built around a cute mascot companion.
 > It combines an SM-2 spaced-repetition core with kana/kanji drills, conversation

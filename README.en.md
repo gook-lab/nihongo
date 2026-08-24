@@ -1,6 +1,6 @@
 # Nihongo App
 
-[한국어](README.md) · **English**
+[한국어](README.md) | **English**
 
 Learn Japanese a little every day with a cute mascot companion. It's a learning app built around spaced repetition.
 
