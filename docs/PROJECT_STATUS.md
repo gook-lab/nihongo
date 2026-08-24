@@ -1,4 +1,4 @@
-# 프로젝트 현황 및 TODO
+# 프로젝트 현황 및 할 일
 
 ## 현재 상태: MVP 완료 ✅
 
@@ -175,6 +175,6 @@ QUESTIONS_PER_SESSION = 20
 ```
 
 ### `src/data/words.ts`
-- 현재 25개 샘플 단어
+- 현재 25개 샘플 단어입니다
 - Word 인터페이스: id, kanji, hiragana, meaning, example
-- `getLearningWords(count)`: 랜덤 셔플 후 count개 반환
+- `getLearningWords(count)`: 랜덤 셔플 후 count개를 반환합니다
