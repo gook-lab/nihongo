@@ -1,16 +1,18 @@
 # 니혼고 (Nihongo App)
 
+**한국어** · [English](README.en.md)
+
 > **About (EN)** — A Japanese-learning PWA built around a cute mascot companion.
 > It combines an SM-2 spaced-repetition core with kana/kanji drills, conversation
 > and reading libraries, JLPT mock tests, and Gemini-powered AI tutoring
 > (chat, writing correction, generated stories). Audio is cached offline in
 > IndexedDB so pronunciation works without a network. React 19 + Vite + Firebase.
 
-매일 조금씩 일본어를 배워요. 귀여운 마스코트 캐릭터와 함께하는 학습 앱이에요.
+매일 조금씩 일본어를 배웁니다. 귀여운 마스코트 캐릭터와 함께하는 학습 앱입니다.
 
 SM-2 간격반복(SRS)을 코어로 하고, 가나·한자 드릴, 회화·독해 라이브러리, JLPT 모의고사,
-그리고 Gemini 기반 AI 튜터(채팅 · 작문 첨삭 · 이야기 생성)를 얹었어요.
-발음 오디오는 IndexedDB에 영속 캐시돼서 오프라인에서도 들을 수 있어요.
+그리고 Gemini 기반 AI 튜터(채팅 · 작문 첨삭 · 이야기 생성)를 탑재했습니다.
+발음 오디오는 IndexedDB에 영속 캐시되어 오프라인에서도 들을 수 있습니다.
 
 ---
 
@@ -45,8 +47,8 @@ VITE_FIREBASE_*=          # Firebase (Auth · Firestore)
 VITE_SENTRY_DSN=          # Sentry (미설정 시 자동 no-op)
 ```
 
-**모든 외부 연동은 미설정 상태에서도 앱이 크래시하지 않아요.** Firebase가 없으면
-로컬 저장만으로 동작하고, Gemini 키가 없으면 UI에 안내 메시지를 띄워요.
+**모든 외부 연동은 미설정 상태에서도 앱이 크래시하지 않습니다.** Firebase가 없으면
+로컬 저장만으로 동작하고, Gemini 키가 없으면 UI에 안내 메시지를 표시합니다.
 
 ---
 
@@ -114,7 +116,7 @@ plans/                   작업 계획 문서
 docs/                    PROJECT_STATUS.md 등
 ```
 
-각 디렉토리(`lib/`, `components/`, `hooks/`, `data/`, `pages/`)에 모듈별 `CLAUDE.md`가 있어요.
+각 디렉토리(`lib/`, `components/`, `hooks/`, `data/`, `pages/`)에 모듈별 `CLAUDE.md`가 있습니다.
 
 ---
 
@@ -122,13 +124,13 @@ docs/                    PROJECT_STATUS.md 등
 
 상세는 **[docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)** 참조. 요점만:
 
-1. **콘텐츠는 코드 안의 순수 데이터예요.** `src/data/*.ts`가 단어·회화·독해·동요를
-   들고 있고, base와 `-ext` 파일을 머지해요. 콘텐츠 추가는 데이터 편집으로 끝나요.
-2. **Firestore는 4-doc으로 분리해요** (profile / state / srs / library) — 자주 바뀌는
-   것과 안 바뀌는 것을 갈라서 쓰기 비용과 충돌을 줄여요.
-3. **TTS는 3계층 캐시예요** — memory → IndexedDB → API. 캐시가 실패해도 무해하게 폴백해요.
-4. **모든 catch는 사용자 피드백 + Sentry 보고를 함께 해요.** 도메인별 헬퍼 8종이 있고,
-   사용자 취소(팝업 닫기 · 비밀번호 오류 · `AbortError`)는 보고를 생략해요.
+1. **콘텐츠는 코드 안의 순수 데이터입니다.** `src/data/*.ts`가 단어·회화·독해·동요를
+   포함하고, base와 `-ext` 파일을 병합합니다. 콘텐츠 추가는 데이터 편집으로 완료됩니다.
+2. **Firestore는 4-doc으로 분리합니다** (profile / state / srs / library) — 변경 빈도가 다른
+   데이터를 분리하여 쓰기 비용과 충돌을 줄입니다.
+3. **TTS는 3계층 캐시입니다** — memory → IndexedDB → API. 캐시 실패 시 다음 계층으로 무해하게 폴백합니다.
+4. **모든 catch는 사용자 피드백 + Sentry 보고를 함께 처리합니다.** 도메인별 헬퍼 8종이 있고,
+   사용자 취소(팝업 닫기 · 비밀번호 오류 · `AbortError`)는 보고를 생략합니다.
 
 ---
 
@@ -145,7 +147,7 @@ docs/                    PROJECT_STATUS.md 등
 
 ## 프로젝트 룰
 
-`.claude/rules/`에 정리되어 있어요.
+`.claude/rules/`에 정리되어 있습니다.
 
 | 파일 | 내용 |
 |---|---|
@@ -157,22 +159,22 @@ docs/                    PROJECT_STATUS.md 등
 
 ## 알려진 함정
 
-- **Tailwind v4는 `tailwind.config.js`를 안 써요** — `src/index.css`의 `@theme`을 써요.
-  shadcn CLI가 v4와 호환되지 않아 컴포넌트는 수동 설치했어요.
+- **Tailwind v4는 `tailwind.config.js`를 사용하지 않습니다** — `src/index.css`의 `@theme`을 사용합니다.
+  shadcn CLI가 v4와 호환되지 않아 컴포넌트는 수동으로 설치했습니다.
 - **Framer Motion + Tailwind width**: `flex items-center justify-center` 부모 안의
-  `motion.div`에 `w-full` / `max-w-sm` 같은 클래스가 무시될 수 있어요.
-  증상은 **텍스트가 세로로 한 글자씩** 나오는 거예요(width가 0에 수렴). 인라인 스타일로 지정하면 돼요.
+  `motion.div`에 `w-full` / `max-w-sm` 같은 클래스가 무시될 수 있습니다.
+  증상은 **텍스트가 세로로 한 글자씩** 나타나는 것입니다(width가 0에 수렴). 인라인 스타일로 지정합니다.
   ```tsx
   // ❌ <motion.div className="w-full max-w-sm">
   // ✅ <motion.div style={{ width: '100%', maxWidth: '24rem' }}>
   ```
-- 모든 Dialog에는 접근성을 위해 `DialogTitle`이 필수예요.
+- 모든 Dialog에는 접근성을 위해 `DialogTitle`이 필수입니다.
 
 ---
 
 ## 라이선스
 
-**Source-available — 오픈소스가 아니에요.** 코드를 읽을 수 있게 공개했을 뿐,
-사용 권한을 준 건 아니에요. 다른 프로젝트에 가져다 쓰거나 재배포·상업적 이용을
-하려면 사전 서면 허락이 필요해요. 전문은 [LICENSE](LICENSE), 한국어 안내는 [LICENSE.ko.md](LICENSE.ko.md) 참조.
+**Source-available — 오픈소스가 아닙니다.** 코드를 읽을 수 있도록 공개했을 뿐,
+사용 권한을 부여하지 않습니다. 다른 프로젝트에 사용하거나 재배포·상업적 이용을
+하려면 사전 서면 허락이 필요합니다. 전문은 [LICENSE](LICENSE), 한국어 안내는 [LICENSE.ko.md](LICENSE.ko.md) 참조합니다.
 

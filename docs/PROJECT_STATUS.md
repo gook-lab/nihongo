@@ -175,6 +175,6 @@ QUESTIONS_PER_SESSION = 20
 ```
 
 ### `src/data/words.ts`
-- 현재 25개 샘플 단어예요
+- 현재 25개 샘플 단어입니다
 - Word 인터페이스: id, kanji, hiragana, meaning, example
-- `getLearningWords(count)`: 랜덤 셔플 후 count개 반환해요
+- `getLearningWords(count)`: 랜덤 셔플 후 count개를 반환합니다
