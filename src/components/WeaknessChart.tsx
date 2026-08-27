@@ -82,8 +82,11 @@ export function WeaknessChart() {
             {levelStats.map((s) => (
               <m.div
                 key={s.level}
-                initial={{ width: 0 }}
-                animate={{ width: '100%' }}
+                // 등장 연출은 opacity 로 한다. width 0 → 100% 는 매 프레임
+                // 레이아웃을 다시 계산하고, 게다가 이 요소는 원래 100% 라
+                // 폭이 변할 이유가 없다.
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
                 className="space-y-1"
               >
                 <div className="flex justify-between text-xs">
@@ -94,10 +97,11 @@ export function WeaknessChart() {
                 </div>
                 <div className="h-2 bg-muted rounded-full overflow-hidden">
                   <m.div
-                    initial={{ width: 0 }}
-                    animate={{ width: `${s.accuracy}%` }}
+                    // width 대신 transform (레이아웃 재계산 회피, 시각 동일)
+                    initial={{ x: '-100%' }}
+                    animate={{ x: `-${100 - s.accuracy}%` }}
                     transition={{ duration: 0.6, ease: 'easeOut' }}
-                    className={`h-full rounded-full ${
+                    className={`h-full w-full rounded-full ${
                       s.accuracy >= 80
                         ? 'bg-green-500'
                         : s.accuracy >= 60

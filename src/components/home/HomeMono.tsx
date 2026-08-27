@@ -141,10 +141,11 @@ export function HomeMono() {
           style={{ background: 'var(--color-border)' }}
         >
           <m.div
-            initial={{ width: 0 }}
-            animate={{ width: `${h.progressPercent}%` }}
+            // width 대신 transform (레이아웃 재계산 회피, 시각 동일)
+            initial={{ x: '-100%' }}
+            animate={{ x: `-${100 - h.progressPercent}%` }}
             transition={{ duration: 0.6 }}
-            className="h-full"
+            className="h-full w-full"
             style={{ background: 'var(--color-primary)' }}
           />
         </div>

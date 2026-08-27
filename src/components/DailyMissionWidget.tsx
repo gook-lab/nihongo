@@ -114,10 +114,13 @@ export function DailyMissionWidget() {
                 </div>
                 <div className="h-1.5 bg-background rounded-full overflow-hidden">
                   <m.div
-                    initial={{ width: 0 }}
-                    animate={{ width: `${percent}%` }}
+                    // width 대신 transform — width 애니메이션은 매 프레임
+                    // 레이아웃을 다시 계산한다. 자식을 트랙 너비로 두고 왼쪽으로
+                    // 밀면 둥근 양끝까지 시각 결과가 같고 합성만 일어난다.
+                    initial={{ x: '-100%' }}
+                    animate={{ x: `-${100 - percent}%` }}
                     transition={{ duration: 0.5, ease: 'easeOut' }}
-                    className={`h-full rounded-full ${
+                    className={`h-full w-full rounded-full ${
                       mission.completed ? 'bg-primary' : 'bg-primary/70'
                     }`}
                   />

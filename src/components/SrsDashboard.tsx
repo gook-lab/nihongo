@@ -149,11 +149,12 @@ export function SrsDashboard() {
                     style={{ background: 'var(--color-muted)' }}
                   >
                     <m.div
-                      initial={{ width: 0 }}
-                      whileInView={{ width: `${Math.round(b.ratio * 100)}%` }}
+                      // width 대신 transform (레이아웃 재계산 회피, 시각 동일)
+                      initial={{ x: '-100%' }}
+                      whileInView={{ x: `-${100 - Math.round(b.ratio * 100)}%` }}
                       viewport={{ once: true, amount: 0.5 }}
                       transition={{ duration: 0.6, ease: 'easeOut' }}
-                      className="h-full rounded-full"
+                      className="h-full w-full rounded-full"
                       style={{
                         background:
                           b.label.includes('지연')
