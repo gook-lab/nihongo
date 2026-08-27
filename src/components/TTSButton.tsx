@@ -82,9 +82,13 @@ function SoundWaveIcon() {
       {[0, 1, 2].map((i) => (
         <m.div
           key={i}
-          className="w-1 bg-current rounded-full"
+          // height 를 무한 반복으로 애니메이션하면 재생 내내 매 프레임 레이아웃이
+          // 다시 계산된다. 컨테이너 높이(h-4 = 16px)로 고정하고 scaleY 로 줄인다 —
+          // 합성만 일어나고, 4px 폭 막대라 둥근 끝의 차이는 실제 크기에서
+          // 구분되지 않는다(1배 렌더로 확인).
+          className="w-1 h-4 origin-center bg-current rounded-full"
           animate={{
-            height: ['8px', '16px', '8px'],
+            scaleY: [0.5, 1, 0.5],
           }}
           transition={{
             duration: 0.5,

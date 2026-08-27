@@ -29,6 +29,9 @@ interface VoiceInputBarProps {
 }
 
 // 웨이브 바 애니메이션 (Siri 스타일) - 음성 감지 시 역동적 움직임
+/** 막대를 이 높이로 고정해 두고 scaleY 로 줄인다 (컨테이너 h-10 = 40px) */
+const BAR_MAX = 40
+
 function WaveBars({ isActive }: { isActive: boolean }) {
   const bars = 5
 
@@ -38,8 +41,10 @@ function WaveBars({ isActive }: { isActive: boolean }) {
     return [...Array(bars)].map((_, i) => {
       const distanceFromCenter = Math.abs(i - centerIndex)
       const baseHeight = 32 - distanceFromCenter * 5 // 중앙: 32, 양끝: 22
+      // 높이 대신 배율로 표현한다 — 컨테이너 높이(BAR_MAX)를 1 로 본 비율.
+      const heights = [6, baseHeight + Math.random() * 8, 12, baseHeight - 5, 6]
       return {
-        heights: [6, baseHeight + Math.random() * 8, 12, baseHeight - 5, 6],
+        scales: heights.map((h) => h / BAR_MAX),
         duration: 0.4 + Math.random() * 0.2,
       }
     })
@@ -50,12 +55,15 @@ function WaveBars({ isActive }: { isActive: boolean }) {
       {barConfigs.map((config, i) => (
         <m.div
           key={i}
-          className="w-[3px] rounded-full bg-primary"
-          initial={{ height: 6, opacity: 0.3 }}
+          // height 무한 반복은 녹음 내내 레이아웃을 다시 계산한다.
+          // 최대 높이로 고정하고 scaleY 로 줄인다 (합성만 일어난다).
+          className="w-[3px] origin-center rounded-full bg-primary"
+          style={{ height: BAR_MAX }}
+          initial={{ scaleY: 6 / BAR_MAX, opacity: 0.3 }}
           animate={isActive ? {
-            height: config.heights,
+            scaleY: config.scales,
             opacity: [0.4, 1, 0.7, 1, 0.4],
-          } : { height: 6, opacity: 0.3 }}
+          } : { scaleY: 6 / BAR_MAX, opacity: 0.3 }}
           transition={{
             duration: config.duration,
             repeat: isActive ? Infinity : 0,
