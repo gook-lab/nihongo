@@ -109,10 +109,11 @@ export function Header({
                 style={{ background: 'var(--color-muted)' }}
               >
                 <m.div
-                  initial={{ width: 0 }}
-                  animate={{ width: `${progressPercent}%` }}
+                  // width 대신 transform (레이아웃 재계산 회피, 시각 동일)
+                  initial={{ x: '-100%' }}
+                  animate={{ x: `-${100 - progressPercent}%` }}
                   transition={{ duration: 0.3, ease: 'easeOut' }}
-                  className="h-full rounded-full"
+                  className="h-full w-full rounded-full"
                   style={{ background: 'var(--color-primary)' }}
                 />
               </div>
