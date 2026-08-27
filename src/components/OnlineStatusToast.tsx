@@ -11,11 +11,15 @@ export function OnlineStatusToast() {
   const [showed, setShowed] = useState<'offline' | 'reconnected' | null>(null)
 
   useEffect(() => {
+    // 자동 닫기 타이머를 붙잡아 둔다 — 정리하지 않으면 언마운트 뒤에 setState 가
+    // 불린다 (react-doctor/effect-needs-cleanup).
+    let hideTimer: ReturnType<typeof setTimeout> | null = null
     const onOnline = () => {
       setOnline(true)
       // 오프라인이었다가 복귀한 경우만 표시
       setShowed('reconnected')
-      setTimeout(() => setShowed(null), 2500)
+      if (hideTimer) clearTimeout(hideTimer)
+      hideTimer = setTimeout(() => setShowed(null), 2500)
     }
     const onOffline = () => {
       setOnline(false)
@@ -27,6 +31,7 @@ export function OnlineStatusToast() {
     return () => {
       window.removeEventListener('online', onOnline)
       window.removeEventListener('offline', onOffline)
+      if (hideTimer) clearTimeout(hideTimer)
     }
   }, [])
 
