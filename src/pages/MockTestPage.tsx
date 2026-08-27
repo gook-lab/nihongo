@@ -174,21 +174,21 @@ export function MockTestPage() {
   // 타이머
   useEffect(() => {
     if (submitted) return
+    // 업데이터는 다음 값만 돌려준다. clearInterval·ref 쓰기·중첩 setState 를
+    // 안에 두면 React 가 업데이터를 두 번 실행할 때 함께 반복된다.
     const t = setInterval(() => {
-      setRemainingSec((s) => {
-        if (s <= 1) {
-          clearInterval(t)
-          if (!submittedRef.current) {
-            submittedRef.current = true
-            setSubmitted(true)
-          }
-          return 0
-        }
-        return s - 1
-      })
+      setRemainingSec((s) => (s <= 1 ? 0 : s - 1))
     }, 1000)
     return () => clearInterval(t)
   }, [submitted])
+
+  // 시간이 다 되면 제출 — 타이머 업데이터가 아니라 값이 확정된 뒤에 처리한다
+  useEffect(() => {
+    if (remainingSec > 0 || submitted) return
+    if (submittedRef.current) return
+    submittedRef.current = true
+    setSubmitted(true)
+  }, [remainingSec, submitted])
 
   const score = useMemo(() => {
     let correct = 0

@@ -1,6 +1,6 @@
 // 학습 결과 화면 — share/screens.jsx ResultScreen 패턴 적용:
 // confetti 배경 + conic-gradient 회전 N5 배지 + 모서리 마스코트 + 격려 문구
-import { useLocation, useNavigate } from 'react-router-dom'
+import { Navigate, useLocation, useNavigate } from 'react-router-dom'
 import { Home, RotateCcw, Zap, Share2, AlertCircle, PenLine, MessageCircle, ChevronRight } from 'lucide-react'
 import { toast } from '@/lib/toast'
 import { Button } from '@/components/ui/button'
@@ -69,8 +69,9 @@ export function ResultPage() {
   }
 
   if (!result) {
-    navigate('/')
-    return null
+    // 렌더 중에 navigate() 를 부르면 안 된다 — 부수효과라 버려지는 렌더에서도
+    // 실행된다. <Navigate> 는 커밋된 뒤에 이동한다.
+    return <Navigate to="/" replace />
   }
 
   const { score, xpEarned } = result

@@ -30,7 +30,8 @@ export function QuickDictSearch({ open, onClose }: Props) {
 
   useEffect(() => {
     if (open) {
-      setTimeout(() => inputRef.current?.focus(), 100)
+      const t = setTimeout(() => inputRef.current?.focus(), 100)
+      return () => clearTimeout(t)
     } else {
       setQuery('')
       setResults([])
