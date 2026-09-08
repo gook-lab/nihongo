@@ -1,10 +1,22 @@
-# Nihongo App
+# nihongo
 
 [한국어](README.md) | **English**
 
-Learn Japanese a little every day with a cute mascot companion. It's a learning app built around spaced repetition.
+Japanese-learning PWA that pairs a mascot companion with a structured review schedule.
 
-We've built the core around SM-2 spaced repetition (SRS), and added kana/kanji drills, conversation and reading libraries, JLPT mock tests, and Gemini-powered AI tutoring (chat, writing correction, story generation). Audio gets cached offline in IndexedDB so you can listen to pronunciation without network. React 19 + Vite + Firebase.
+[Demo](https://nihan-go-test.netlify.app/) · [Architecture](docs/ARCHITECTURE.md) · [Project status](docs/PROJECT_STATUS.md)
+
+<img src="docs/screenshots/cover.png" alt="nihongo Japanese learning screen" width="100%">
+
+SM-2 spaced repetition determines when material should return for review. Kana, kanji, conversation, reading, and JLPT practice share one learning flow. A Gemini-based tutor supports conversation and writing feedback, while pronunciation audio is stored in IndexedDB for replay on unreliable networks.
+
+## Learning flow
+
+- **Learn**: study kana, kanji, vocabulary, and grammar with immediate answer feedback.
+- **Review**: schedule the next review from answer history and bring weak material back sooner.
+- **Practice**: apply learned expressions through conversation, reading, and JLPT exercises.
+- **AI tutor**: write and speak in Japanese, then receive conversational and writing feedback.
+- **Offline playback**: reuse downloaded pronunciation audio and fall back to browser speech when external TTS is unavailable.
 
 ---
 
@@ -39,7 +51,7 @@ VITE_FIREBASE_*=          # Firebase (Auth, Firestore)
 VITE_SENTRY_DSN=          # Sentry (auto no-op if unset)
 ```
 
-**All external integrations are optional — the app won't crash if they're unset.** Without Firebase, you'll just save locally. Without a Gemini key, the AI screens show a setup message instead.
+Core learning remains available through local storage when external integrations are not configured. AI screens show setup guidance when a Gemini key is unavailable.
 
 ---
 
@@ -145,7 +157,7 @@ Organized in `.claude/rules/`:
 
 ---
 
-## Known Gotchas
+## Development notes
 
 - **Tailwind v4 doesn't use `tailwind.config.js`** — it uses `@theme` in `src/index.css`. Since shadcn CLI doesn't support v4, we manually installed components.
 - **Framer Motion + Tailwind width**: Width classes like `w-full` or `max-w-sm` on `motion.div` inside a `flex items-center justify-center` parent can be ignored. You'll see **text stacking vertically, one letter per line** (width shrinking to ~0). Use inline styles instead.

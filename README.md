@@ -6,6 +6,8 @@
 
 [Demo](https://nihan-go-test.netlify.app/) · [Architecture](docs/ARCHITECTURE.md) · [Project status](docs/PROJECT_STATUS.md)
 
+<img src="docs/screenshots/cover.png" alt="nihongo 일본어 학습 화면" width="100%">
+
 SM-2 간격 반복 알고리즘으로 복습 시점을 계산하고, 가나·한자·회화·독해와 JLPT 모의고사를 하나의 학습 흐름으로 연결했습니다. Gemini 기반 튜터는 대화 연습과 작문 피드백을 제공하며, 발음 오디오는 IndexedDB에 저장해 네트워크가 불안정한 환경에서도 다시 들을 수 있습니다.
 
 ## 학습 흐름
