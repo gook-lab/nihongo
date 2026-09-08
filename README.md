@@ -1,18 +1,20 @@
-# 니혼고 (Nihongo App)
+# nihongo
 
 **한국어** | [English](README.en.md)
 
-> **About (EN)** — A Japanese-learning PWA built around a cute mascot companion.
-> It combines an SM-2 spaced-repetition core with kana/kanji drills, conversation
-> and reading libraries, JLPT mock tests, and Gemini-powered AI tutoring
-> (chat, writing correction, generated stories). Audio is cached offline in
-> IndexedDB so pronunciation works without a network. React 19 + Vite + Firebase.
+마스코트와 함께 학습하고 복습 주기를 관리하는 일본어 학습 PWA입니다.
 
-매일 조금씩 일본어를 배웁니다. 귀여운 마스코트 캐릭터와 함께하는 학습 앱입니다.
+[Demo](https://nihan-go-test.netlify.app/) · [Architecture](docs/ARCHITECTURE.md) · [Project status](docs/PROJECT_STATUS.md)
 
-SM-2 간격반복(SRS)을 코어로 하고, 가나·한자 드릴, 회화·독해 라이브러리, JLPT 모의고사,
-그리고 Gemini 기반 AI 튜터(채팅 · 작문 첨삭 · 이야기 생성)를 탑재했습니다.
-발음 오디오는 IndexedDB에 영속 캐시되어 오프라인에서도 들을 수 있습니다.
+SM-2 간격 반복 알고리즘으로 복습 시점을 계산하고, 가나·한자·회화·독해와 JLPT 모의고사를 하나의 학습 흐름으로 연결했습니다. Gemini 기반 튜터는 대화 연습과 작문 피드백을 제공하며, 발음 오디오는 IndexedDB에 저장해 네트워크가 불안정한 환경에서도 다시 들을 수 있습니다.
+
+## 학습 흐름
+
+- **학습**: 가나·한자·단어·문법을 단계별로 학습하고 정답 결과를 바로 확인합니다.
+- **복습**: 정답 기록을 바탕으로 다음 복습 시점을 계산하고 오답과 약한 영역을 다시 제시합니다.
+- **연습**: 회화·독해·JLPT 문제로 학습한 표현을 문맥 안에서 확인합니다.
+- **AI 튜터**: 채팅과 작문 첨삭으로 직접 문장을 만들고 피드백을 받습니다.
+- **오프라인 재생**: 한 번 내려받은 발음은 브라우저에 보관하고, 외부 TTS를 사용할 수 없으면 브라우저 음성으로 전환합니다.
 
 ---
 
@@ -47,8 +49,7 @@ VITE_FIREBASE_*=          # Firebase (Auth · Firestore)
 VITE_SENTRY_DSN=          # Sentry (미설정 시 자동 no-op)
 ```
 
-**모든 외부 연동은 미설정 상태에서도 앱이 크래시하지 않습니다.** Firebase가 없으면
-로컬 저장만으로 동작하고, Gemini 키가 없으면 UI에 안내 메시지를 표시합니다.
+외부 연동을 설정하지 않은 경우에도 기본 학습 기능은 로컬 저장소로 동작합니다. Gemini 키가 없으면 AI 기능 대신 설정 안내를 표시합니다.
 
 ---
 
@@ -157,7 +158,7 @@ docs/                    PROJECT_STATUS.md 등
 
 ---
 
-## 알려진 함정
+## 개발 참고사항
 
 - **Tailwind v4는 `tailwind.config.js`를 사용하지 않습니다** — `src/index.css`의 `@theme`을 사용합니다.
   shadcn CLI가 v4와 호환되지 않아 컴포넌트는 수동으로 설치했습니다.
@@ -177,4 +178,3 @@ docs/                    PROJECT_STATUS.md 등
 **Source-available — 오픈소스가 아닙니다.** 코드를 읽을 수 있도록 공개했을 뿐,
 사용 권한을 부여하지 않습니다. 다른 프로젝트에 사용하거나 재배포·상업적 이용을
 하려면 사전 서면 허락이 필요합니다. 전문은 [LICENSE](LICENSE), 한국어 안내는 [LICENSE.ko.md](LICENSE.ko.md) 참조합니다.
-
