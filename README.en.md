@@ -18,6 +18,16 @@ SM-2 spaced repetition determines when material should return for review. Kana, 
 - **AI tutor**: write and speak in Japanese, then receive conversational and writing feedback.
 - **Offline playback**: reuse downloaded pronunciation audio and fall back to browser speech when external TTS is unavailable.
 
+## From problem to verification
+
+| Stage | Details |
+|---|---|
+| Problem | When learning, review, and conversation tools are disconnected, learners must decide what to study next on their own. |
+| Decision | Use answer history to schedule reviews, then bring learned expressions back through conversation, reading, and tests. |
+| Implementation | Keep SM-2 scheduling, wrong-answer history, the Gemini tutor, and IndexedDB audio caching in separate modules. |
+| Verification | Test learning state and pure search and answer-matching logic with Vitest, and confirm that core study flows survive external integration failures. |
+| Retrospective | Connecting each learning record to the next useful action mattered more than adding another isolated feature. |
+
 ---
 
 ## Screenshots
