@@ -15,7 +15,6 @@ export function SWUpdatePrompt() {
     updateServiceWorker,
   } = useRegisterSW({
     onRegisterError(error: unknown) {
-      // eslint-disable-next-line no-console
       console.warn('[SW] register error:', error)
     },
   })

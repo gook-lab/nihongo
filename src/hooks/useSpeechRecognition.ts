@@ -43,7 +43,6 @@ interface SpeechRecognitionInstance extends EventTarget {
   abort(): void
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 type SpeechRecognitionConstructor = new () => SpeechRecognitionInstance
 
 // 음성 인식 상태
