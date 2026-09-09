@@ -9,23 +9,17 @@ import { reportError } from './report'
 
 export function testGlitchTip() {
   const dsn = import.meta.env.VITE_SENTRY_DSN
-  // eslint-disable-next-line no-console
   console.group('[GlitchTip Test]')
-  // eslint-disable-next-line no-console
   console.log('DSN configured:', !!dsn)
-  // eslint-disable-next-line no-console
   console.log('Environment:', import.meta.env.MODE)
 
   if (!dsn) {
-    // eslint-disable-next-line no-console
     console.warn(
       '⚠ VITE_SENTRY_DSN이 설정되지 않았어요. Netlify 환경변수 확인 필요:',
     )
-    // eslint-disable-next-line no-console
     console.warn(
       '  Netlify Dashboard → Site settings → Environment variables → VITE_SENTRY_DSN',
     )
-    // eslint-disable-next-line no-console
     console.groupEnd()
     return
   }
@@ -43,11 +37,8 @@ export function testGlitchTip() {
   // 추가로 메시지 캡처도 한 번 (송신 경로 다중 검증)
   Sentry.captureMessage('GlitchTip 송신 테스트 — captureMessage 경로', 'info')
 
-  // eslint-disable-next-line no-console
   console.log('✓ 2개 이벤트 송신했어요. GlitchTip 대시보드에서 확인하세요:')
-  // eslint-disable-next-line no-console
   console.log('  https://app.glitchtip.com')
-  // eslint-disable-next-line no-console
   console.groupEnd()
 }
 
