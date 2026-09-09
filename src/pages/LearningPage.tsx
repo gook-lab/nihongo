@@ -396,7 +396,7 @@ export function LearningPage() {
     // 예: meaning="냉장고", text="냉장고에 우유가 있습니다." -> "[블록]에 우유가 있습니다."
 
     // 복수 의미 처리 (쉼표로 구분된 경우 모든 의미 시도)
-    const meanings = meaning.split(/[,،、\/]/).map((s) => s.trim())
+    const meanings = meaning.split(/[,،、/]/).map((s) => s.trim())
 
     for (const m of meanings) {
       // 의미의 어근 추출 (하다, 다 제거)

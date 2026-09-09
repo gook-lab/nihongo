@@ -85,7 +85,8 @@ function foldLine(line: string): string {
   // 첫 라인은 75 byte, 이후 라인은 ' ' 1 byte 포함 75 byte → 콘텐츠 74 byte
   if (byteLen(line) <= 75) return line
   const parts: string[] = []
-  let { head, tail } = sliceBytes(line, 75)
+  const { head, tail: initialTail } = sliceBytes(line, 75)
+  let tail = initialTail
   parts.push(head)
   while (tail.length > 0 && byteLen(tail) > 74) {
     const next = sliceBytes(tail, 74)
