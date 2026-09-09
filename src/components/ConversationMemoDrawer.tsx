@@ -34,7 +34,9 @@ function readSavedSize(): Size | null {
     if (!raw) return null
     const v = JSON.parse(raw)
     if (typeof v.width === 'number' && typeof v.height === 'number') return v
-  } catch {}
+  } catch {
+    // 저장값이 손상되면 기본 크기를 사용한다.
+  }
   return null
 }
 
@@ -137,7 +139,9 @@ export function ConversationMemoDrawer({
     // 저장
     try {
       localStorage.setItem(SIZE_KEY, JSON.stringify(size))
-    } catch {}
+    } catch {
+      // 저장 공간을 사용할 수 없어도 리사이즈 동작은 유지한다.
+    }
   }, [size, onResizeMove])
 
   const onResizeStart = (

@@ -11,7 +11,7 @@
  */
 function splitMeanings(meaning: string): string[] {
   return meaning
-    .split(/[,،、\/]/) // 쉼표, 아랍 쉼표, 일본어 쉼표, 슬래시
+    .split(/[,،、/]/) // 쉼표, 아랍 쉼표, 일본어 쉼표, 슬래시
     .map((s) => s.trim())
     .filter((s) => s.length > 0)
 }

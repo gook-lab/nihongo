@@ -52,7 +52,7 @@ export function HomePage() {
   else if (effective === 'editorial') content = <HomeEditorial />
   else if (effective === 'mono') content = <HomeMono />
   else if (effective === 'ios') content = <HomeIos />
-  else content = <HomeDefaultOrMascot forceMascot={effective === 'mascot'} />
+  else content = <HomeDefaultOrMascot />
 
   return (
     <>
@@ -63,8 +63,7 @@ export function HomePage() {
   )
 }
 
-// forceMascot은 layout 매핑(mascot) 식별용으로 유지 — 현재 동일 카드 사용으로 분기 없음
-function HomeDefaultOrMascot(_props: { forceMascot?: boolean }) {
+function HomeDefaultOrMascot() {
   const navigate = useNavigate()
   const {
     user,

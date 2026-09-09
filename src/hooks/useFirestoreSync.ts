@@ -2,7 +2,7 @@
 // - 로그인 감지 → loadAllUserData → store rehydrate
 // - 카테고리별 변경 감지 → 1.5초 debounce → saveCategory
 // - 첫 로그인 시 (Firestore 데이터 없음) 현재 localStorage 값을 Firestore에 마이그레이션 write
-import { useEffect, useRef } from 'react'
+import { useCallback, useEffect, useRef } from 'react'
 import { useAppStore } from '@/store'
 import {
   loadAllUserData,
@@ -91,7 +91,7 @@ export function useFirestoreSync() {
   const hydratedRef = useRef(false) // hydrate 완료 전엔 write 비활성
 
   // Firestore에 dirty 카테고리만 flush
-  const flushDirty = () => {
+  const flushDirty = useCallback(() => {
     const uid = uidRef.current
     if (!uid || !hydratedRef.current) return
     const s = useAppStore.getState()
@@ -141,12 +141,12 @@ export function useFirestoreSync() {
       saveCategory(uid, 'library', pickLibrary(s) as unknown as Record<string, unknown>)
       dirty.library = false
     }
-  }
+  }, [])
 
-  const scheduleFlush = () => {
+  const scheduleFlush = useCallback(() => {
     if (debounceTimerRef.current) clearTimeout(debounceTimerRef.current)
     debounceTimerRef.current = setTimeout(flushDirty, DEBOUNCE_MS)
-  }
+  }, [flushDirty])
 
   useEffect(() => {
     if (!isFirebaseConfigured()) {
@@ -322,7 +322,7 @@ export function useFirestoreSync() {
       window.removeEventListener('beforeunload', onBeforeUnload)
       if (debounceTimerRef.current) clearTimeout(debounceTimerRef.current)
     }
-  }, [])
+  }, [flushDirty, scheduleFlush])
 
   return {
     /** uid 반환 (디버그/마이페이지에서 사용) */
