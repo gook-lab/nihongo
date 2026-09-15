@@ -79,7 +79,7 @@ VITE_SENTRY_DSN=          # Sentry (미설정 시 자동 no-op)
 | 인증 | Firebase Auth (Google · 카카오/네이버 OIDC · 이메일) |
 | 데이터 | Firestore (4-doc 분리 동기화) + IndexedDB (`idb`) |
 | AI | Google Gemini (`@google/genai`) |
-| TTS | Murf.ai (2계층 캐시) + 브라우저 TTS 폴백 |
+| TTS | Murf.ai · 메모리/IndexedDB 캐시 · 브라우저 TTS 대체 경로 |
 | 에러 | Sentry + react-error-boundary |
 | 배포 | Netlify (`netlify.toml`) / Firebase Hosting |
 
@@ -112,7 +112,7 @@ src/
 │   ├── firestore.ts     4-doc 분리 동기화 (profile / state / srs / library)
 │   ├── srs.ts           SuperMemo-2 알고리즘
 │   ├── murf.ts          TTS API — 2계층 캐시 (memory → IndexedDB → API) + prefetch
-│   ├── audioCache.ts    TTS 오디오 IndexedDB 영속 캐시 (실패 시 무해 폴백)
+│   ├── audioCache.ts    TTS 오디오 IndexedDB 영속 캐시 (실패 시 캐시 없이 계속)
 │   ├── gemini.ts        Gemini (채팅 · 작문 · 이야기)
 │   ├── quickSearch.ts   ⌘K 검색 순수 로직
 │   ├── answerMatcher.ts 정답 매칭 (오탈자 허용)
@@ -141,7 +141,7 @@ docs/                    PROJECT_STATUS.md 등
    포함하고, base와 `-ext` 파일을 병합합니다. 콘텐츠 추가는 데이터 편집으로 완료됩니다.
 2. **Firestore는 4-doc으로 분리합니다** (profile / state / srs / library) — 변경 빈도가 다른
    데이터를 분리하여 쓰기 비용과 충돌을 줄입니다.
-3. **TTS는 3계층 캐시입니다** — memory → IndexedDB → API. 캐시 실패 시 다음 계층으로 무해하게 폴백합니다.
+3. **TTS는 메모리와 IndexedDB를 차례로 조회합니다.** 저장된 음성이 없으면 API를 호출하고, API를 사용할 수 없으면 브라우저 TTS로 전환합니다.
 4. **모든 catch는 사용자 피드백 + Sentry 보고를 함께 처리합니다.** 도메인별 헬퍼 8종이 있고,
    사용자 취소(팝업 닫기 · 비밀번호 오류 · `AbortError`)는 보고를 생략합니다.
 
@@ -152,7 +152,7 @@ docs/                    PROJECT_STATUS.md 등
 | 문서 | 내용 |
 |---|---|
 | [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) | 아키텍처 — 저장소 3층 · SRS · Firestore 4-doc · TTS 캐시 |
-| [docs/PROJECT_STATUS.md](docs/PROJECT_STATUS.md) | 기능별 완료 현황 체크리스트 |
+| [docs/CURRENT-STATUS.md](docs/CURRENT-STATUS.md) | 현재 구현 범위와 남은 제약 |
 | [TODOS.md](TODOS.md) | 남은 작업 |
 | [CLAUDE.md](CLAUDE.md) | 작업 규칙 (+ 각 디렉토리에 모듈별 `CLAUDE.md`) |
 | [docs/mascot-costume-prompts.md](docs/mascot-costume-prompts.md) | 마스코트 의상 생성 프롬프트 |
@@ -182,6 +182,14 @@ docs/                    PROJECT_STATUS.md 등
   // ✅ <motion.div style={{ width: '100%', maxWidth: '24rem' }}>
   ```
 - 모든 Dialog에는 접근성을 위해 `DialogTitle`이 필수입니다.
+
+---
+
+## 프로젝트 회고
+
+학습 앱에서는 기능의 수보다 사용자가 매일 다시 돌아올 수 있는 흐름이 중요했습니다. 복습 시점, 빠른 검색, 오프라인 발음 재생을 연결하면서 각각의 기능이 하나의 반복 학습 과정으로 작동하도록 다듬었습니다.
+
+AI 회화와 작문 첨삭은 학습의 전제가 아니라 막히는 순간에 선택하는 보조 도구로 두었습니다. 외부 API나 네트워크에 문제가 생겨도 기본 학습을 계속할 수 있어야 중심 경험이 흔들리지 않았습니다. 이후 PWA를 설계할 때에도 반복 사용을 끊는 지점과 오프라인 흐름을 먼저 확인하려 합니다.
 
 ---
 
