@@ -8,13 +8,12 @@ import { Bookmark, Gamepad2, Star } from 'lucide-react'
 import { Card, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { TTSButton } from '@/components/TTSButton'
-import { ClickablePhrase } from '@/components/conversation/ClickablePhrase'
+import { LinkedPhrase } from '@/components/conversation/LinkedPhrase'
 import { PrefetchAudioButton } from '@/components/conversation/PrefetchAudioButton'
 import { cn } from '@/lib/utils'
 import { useAppStore } from '@/store'
 import { CONVERSATION_CATEGORIES } from '@/data/conversations'
 import { getIconByName } from '@/lib/icon-map'
-import type { ConversationWord } from '@/types'
 
 export function ConversationDetailPage() {
   const { categoryId } = useParams<{ categoryId: string }>()
@@ -60,19 +59,6 @@ export function ConversationDetailPage() {
   }
 
   const Icon = getIconByName(category.icon)
-
-  const handleWordClick = (word: ConversationWord, isSaved: boolean, isParticle: boolean) => {
-    if (isParticle) {
-      toast.warning({ message: '조사는 메모할 수 없습니다', id: 'particle-warn' })
-      return
-    }
-
-    if (isSaved) {
-      toast.info({ message: `"${word.text}" 메모에서 삭제됐어요`, id: `memo-${word.text}` })
-    } else {
-      toast.success({ message: `"${word.text}" 메모에 저장됐어요`, id: `memo-${word.text}` })
-    }
-  }
 
   return (
     <div className="min-h-screen bg-background pb-8">
@@ -180,14 +166,8 @@ export function ConversationDetailPage() {
                     <TTSButton text={phrase.japanese} variant="ghost" size="icon" />
                   </div>
                 </div>
-                <ClickablePhrase
-                  phrase={phrase}
-                  categoryId={category.id}
-                  onWordClick={handleWordClick}
-                />
-                <p className="text-sm text-muted-foreground mt-2">
-                  {phrase.korean}
-                </p>
+                {/* 신기능: 사전 연결 단어 매칭 */}
+                <LinkedPhrase phrase={phrase} />
               </CardContent>
             </Card>
           </m.div>
