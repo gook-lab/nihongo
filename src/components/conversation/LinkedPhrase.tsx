@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react'
+import { useState, useRef, useEffect, useMemo } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { X, Plus, Check } from 'lucide-react'
 import { Button } from '@/components/ui/button'
@@ -27,7 +27,12 @@ export function LinkedPhrase({ phrase, categoryId }: LinkedPhraseProps) {
   const [selectedWordId, setSelectedWordId] = useState<string | null>(null)
   const previousFocusRef = useRef<HTMLElement | null>(null)
   const bottomSheetRef = useRef<HTMLDivElement>(null)
-  const matches = matchPhraseWithWords(phrase.japanese, WORDS)
+
+  // 사전 매칭을 메모이즈해서 렌더마다 인덱스를 재생성하지 않음
+  const matches = useMemo(
+    () => matchPhraseWithWords(phrase.japanese, WORDS),
+    [phrase.japanese]
+  )
 
   // Zustand store에서 회화 메모 조회 및 미션 진행도 업데이트
   const { conversationMemo, addConversationMemo, removeConversationMemo, bumpMissionProgress } = useAppStore()
