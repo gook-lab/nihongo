@@ -167,7 +167,7 @@ export function ConversationDetailPage() {
                   </div>
                 </div>
                 {/* 신기능: 사전 연결 단어 매칭 */}
-                <LinkedPhrase phrase={phrase} />
+                <LinkedPhrase phrase={phrase} categoryId={category.id} />
               </CardContent>
             </Card>
           </m.div>

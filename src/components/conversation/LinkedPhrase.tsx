@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { X, Plus, Check } from 'lucide-react'
 import { Button } from '@/components/ui/button'
@@ -11,6 +11,7 @@ import { WORDS } from '@/data/words'
 
 interface LinkedPhraseProps {
   phrase: ConversationPhrase
+  categoryId: string
 }
 
 /**
@@ -22,16 +23,55 @@ interface LinkedPhraseProps {
  * - "단어장에 담기" 버튼으로 개인 단어장에 추가
  * - 이미 추가된 단어는 "담아졌어요" 표시
  */
-export function LinkedPhrase({ phrase }: LinkedPhraseProps) {
+export function LinkedPhrase({ phrase, categoryId }: LinkedPhraseProps) {
   const [selectedWordId, setSelectedWordId] = useState<string | null>(null)
+  const previousFocusRef = useRef<HTMLElement | null>(null)
+  const bottomSheetRef = useRef<HTMLDivElement>(null)
   const matches = matchPhraseWithWords(phrase.japanese, WORDS)
 
-  // Zustand store에서 회화 메모 조회
-  const { conversationMemo, addConversationMemo, removeConversationMemo } = useAppStore()
+  // Zustand store에서 회화 메모 조회 및 미션 진행도 업데이트
+  const { conversationMemo, addConversationMemo, removeConversationMemo, bumpMissionProgress } = useAppStore()
+
+  // 바텀시트 열 때: 포커스 저장, 닫을 때: 복귀
+  useEffect(() => {
+    if (selectedWordId) {
+      previousFocusRef.current = document.activeElement as HTMLElement
+      // 바텀시트에 포커스 이동 (닫기 버튼으로)
+      setTimeout(() => {
+        const closeButton = bottomSheetRef.current?.querySelector('button[aria-label="닫기"]') as HTMLButtonElement
+        closeButton?.focus()
+      }, 100)
+    } else if (previousFocusRef.current) {
+      previousFocusRef.current.focus()
+      previousFocusRef.current = null
+    }
+  }, [selectedWordId])
+
+  // Esc 키로 바텀시트 닫기
+  useEffect(() => {
+    const handleEscape = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && selectedWordId) {
+        setSelectedWordId(null)
+      }
+    }
+    document.addEventListener('keydown', handleEscape)
+    return () => document.removeEventListener('keydown', handleEscape)
+  }, [selectedWordId])
 
   // 선택된 단어 정보
   const selectedMatch = matches.find((m) => m.word.id === selectedWordId)
   const selectedWord = selectedMatch?.word
+
+  // 선택된 단어가 입자인지 확인 (phrase.words에서 입자 정보 가져오기)
+  const selectedWordFromPhrase = selectedMatch
+    ? phrase.words.find(
+        (w) =>
+          w.text === selectedMatch.matchedText ||
+          w.reading === selectedMatch.word.hiragana ||
+          w.text === selectedMatch.word.kanji
+      )
+    : null
+  const isParticle = selectedWordFromPhrase?.isParticle === true
 
   // 이 단어가 이미 메모에 있는지 확인
   const isMemoized =
@@ -42,24 +82,25 @@ export function LinkedPhrase({ phrase }: LinkedPhraseProps) {
     if (!selectedWord) return
 
     // 입자는 메모 추가 불가
-    if (selectedMatch?.word.kanji && selectedMatch.word.kanji.length <= 1 && !selectedWord.kanji.match(/[ぁ-ん]/)) {
-      toast.info({ message: '입자는 단어장에 담을 수 없어요.' })
+    if (isParticle) {
+      toast.info({ message: '조사는 단어장에 담을 수 없어요.' })
       return
     }
 
     if (isMemoized) {
       removeConversationMemo(selectedWord.kanji)
-      toast.success({ message: '단어장에서 제거했어요.' })
+      toast.info({ message: '단어장에서 제거했어요.' })
     } else {
       addConversationMemo({
         text: selectedWord.kanji,
         reading: selectedWord.hiragana,
         meaning: selectedWord.meaning,
         sourcePhrase: phrase.japanese,
-        category: '', // 회화 페이지에서 카테고리는 컨텍스트로 받음
+        category: categoryId,
         savedAt: Date.now(),
       })
       toast.success({ message: '단어장에 담았어요.' })
+      bumpMissionProgress('conversation', 1)
     }
   }
 
@@ -91,6 +132,7 @@ export function LinkedPhrase({ phrase }: LinkedPhraseProps) {
                       : 'bg-primary/10 text-primary hover:bg-primary/20'
                   }`}
                   type="button"
+                  aria-label={`${match.matchedText}. 뜻: ${match.word.meaning}`}
                 >
                   <span className="text-sm font-medium">{match.matchedText}</span>
                   <span className="text-[10px] opacity-75">{hiraganaToRomaji(match.word.hiragana)}</span>
@@ -135,6 +177,7 @@ export function LinkedPhrase({ phrase }: LinkedPhraseProps) {
       <AnimatePresence>
         {selectedWord && (
           <motion.div
+            ref={bottomSheetRef}
             initial={{ y: '100%' }}
             animate={{ y: 0 }}
             exit={{ y: '100%' }}
@@ -144,6 +187,9 @@ export function LinkedPhrase({ phrase }: LinkedPhraseProps) {
               maxHeight: '60vh',
               overflowY: 'auto',
             }}
+            role="dialog"
+            aria-modal="true"
+            aria-label="단어 상세 정보"
           >
             {/* 닫기 버튼 */}
             <button
@@ -193,9 +239,7 @@ export function LinkedPhrase({ phrase }: LinkedPhraseProps) {
                 onClick={handleAddToMemo}
                 variant={isMemoized ? 'outline' : 'default'}
                 className="w-full"
-                disabled={
-                  Boolean(selectedWord.kanji && selectedWord.kanji.length <= 1 && !selectedWord.kanji.match(/[ぁ-ん]/))
-                }
+                disabled={isParticle}
               >
                 {isMemoized ? (
                   <>
